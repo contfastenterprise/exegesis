@@ -157,11 +157,10 @@ export function App() {
 
   // Like sermon (Heart)
   const toggleLikeSermon = async (sermon: Sermon) => {
-    let isAdding = false;
+    const isLiked = likedIds.includes(sermon.id);
+    const isAdding = !isLiked;
     
     setLikedIds((prev) => {
-      const isLiked = prev.includes(sermon.id);
-      isAdding = !isLiked;
       const updated = isLiked ? prev.filter((id) => id !== sermon.id) : [...prev, sermon.id];
       try {
         localStorage.setItem('gt_likes_v1', JSON.stringify(updated));
