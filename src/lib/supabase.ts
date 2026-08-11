@@ -62,7 +62,19 @@ export const DataService = {
     if (supabase) {
       try {
         const { data, error } = await supabase.from('devotionals').select('*').order('date', { ascending: false });
-        if (!error && data) return data as Devotional[];
+        if (!error && data) {
+          return data.map((d: any) => ({
+            id: d.id,
+            title: d.title,
+            type: d.type,
+            content: d.content,
+            mediaUrl: d.media_url,
+            youtubeUrl: d.youtube_url,
+            author: d.author,
+            date: d.date,
+            createdAt: d.created_at
+          })) as Devotional[];
+        }
       } catch (err) {
         console.warn('Supabase devotionals fetch error:', err);
       }
@@ -71,18 +83,45 @@ export const DataService = {
   },
 
   async addDevotional(devotional: Omit<Devotional, 'id' | 'createdAt'>): Promise<Devotional> {
+    const localId = 'devo-' + Date.now();
     const newDevotional: Devotional = {
       ...devotional,
-      id: 'devo-' + Date.now(),
+      id: localId,
       createdAt: new Date().toISOString()
     };
 
     if (supabase) {
       try {
-        const { data, error } = await supabase.from('devotionals').insert([newDevotional]).select().single();
-        if (!error && data) return data as Devotional;
+        const dbPayload = {
+          title: devotional.title,
+          type: devotional.type,
+          content: devotional.content,
+          media_url: devotional.mediaUrl,
+          youtube_url: devotional.youtubeUrl,
+          author: devotional.author,
+          date: devotional.date
+          // Let Supabase handle id and created_at
+        };
+
+        const { data, error } = await supabase.from('devotionals').insert([dbPayload]).select().single();
+        if (error) {
+          console.error('Supabase add devotional error:', error);
+          alert('Error al guardar en la base de datos: ' + error.message);
+        } else if (data) {
+          return {
+            id: data.id,
+            title: data.title,
+            type: data.type,
+            content: data.content,
+            mediaUrl: data.media_url,
+            youtubeUrl: data.youtube_url,
+            author: data.author,
+            date: data.date,
+            createdAt: data.created_at
+          } as Devotional;
+        }
       } catch (err) {
-        console.warn('Supabase add devotional error:', err);
+        console.warn('Supabase add devotional exception:', err);
       }
     }
     
@@ -93,11 +132,23 @@ export const DataService = {
   },
 
   async updateDevotional(devotional: Devotional): Promise<Devotional> {
-    if (supabase) {
+    if (supabase && !devotional.id.startsWith('devo-')) {
       try {
-        await supabase.from('devotionals').update(devotional).eq('id', devotional.id);
+        const dbPayload = {
+          title: devotional.title,
+          type: devotional.type,
+          content: devotional.content,
+          media_url: devotional.mediaUrl,
+          youtube_url: devotional.youtubeUrl,
+          author: devotional.author,
+          date: devotional.date
+        };
+        const { error } = await supabase.from('devotionals').update(dbPayload).eq('id', devotional.id);
+        if (error) {
+           console.error('Supabase update devotional error:', error);
+        }
       } catch (err) {
-        console.warn('Supabase update devotional error:', err);
+        console.warn('Supabase update devotional exception:', err);
       }
     }
     const devotionals = getStoredItem<Devotional[]>(STORAGE_KEYS.DEVOTIONALS, []);
@@ -107,11 +158,14 @@ export const DataService = {
   },
 
   async deleteDevotional(id: string): Promise<void> {
-    if (supabase) {
+    if (supabase && !id.startsWith('devo-')) {
       try {
-        await supabase.from('devotionals').delete().eq('id', id);
+        const { error } = await supabase.from('devotionals').delete().eq('id', id);
+        if (error) {
+           console.error('Supabase delete devotional error:', error);
+        }
       } catch (err) {
-        console.warn('Supabase delete devotional error:', err);
+        console.warn('Supabase delete devotional exception:', err);
       }
     }
     const devotionals = getStoredItem<Devotional[]>(STORAGE_KEYS.DEVOTIONALS, []);
