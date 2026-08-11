@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { NavTab, UserSession, SystemSettings } from '../types';
 import { AnimatePresence, motion } from 'motion/react';
 import { 
@@ -80,10 +81,21 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Main Header Container */}
         <div className="h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
           
+          {/* Mobile Navigation Menu Toggle (Left on Mobile) */}
+          <div className="flex md:hidden items-center shrink-0">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-xl text-[#442a22] bg-[#faf2f0] border border-[#e9e1df] hover:bg-[#efe6e4] focus:outline-none"
+              aria-label="Abrir menú de navegación"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" strokeWidth={1.5} /> : <Menu className="w-5 h-5" strokeWidth={1.5} />}
+            </button>
+          </div>
+
           {/* Brand Logo & Name */}
           <button 
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-2.5 sm:gap-3 group text-left focus:outline-none shrink-0"
+            className="flex-1 md:flex-none flex items-center justify-center md:justify-start gap-2.5 sm:gap-3 group text-left focus:outline-none shrink-0"
           >
             {logoUrl ? (
               <img 
@@ -217,8 +229,8 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* Mobile Navigation Menu Toggle */}
-          <div className="flex md:hidden items-center gap-1.5">
+          {/* Mobile Right Controls (Favorites) */}
+          <div className="flex md:hidden items-center shrink-0">
             <button
               onClick={onOpenFavorites}
               className="relative p-2 rounded-full text-[#504441] bg-[#faf2f0] border border-[#e9e1df]"
@@ -230,13 +242,6 @@ export const Header: React.FC<HeaderProps> = ({
                   {favoriteCount}
                 </span>
               )}
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-[#442a22] bg-[#faf2f0] border border-[#e9e1df] hover:bg-[#efe6e4] focus:outline-none"
-              aria-label="Abrir menú de navegación"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" strokeWidth={1.5} /> : <Menu className="w-5 h-5" strokeWidth={1.5} />}
             </button>
           </div>
         </div>
@@ -271,107 +276,108 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* True Mobile Menu Drawer (Slides from Left) */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 flex md:hidden bg-black/50 backdrop-blur-sm">
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-3/4 max-w-sm bg-[#fff8f6] h-full shadow-2xl border-r border-[#e9e1df] p-6 flex flex-col justify-between overflow-y-auto"
-            >
-              <div>
-                <div className="flex items-center justify-between pb-4 border-b border-[#e9e1df] mb-6">
-                  <div className="flex items-center gap-2">
-                    <Church className="w-5 h-5 text-[#D4AF37]" />
-                    <h3 className="font-serif text-xl font-bold text-[#442a22]">
-                      Menú
-                    </h3>
-                  </div>
-                  <button
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="p-2 rounded-full hover:bg-[#efe6e4] text-[#504441] min-h-[44px] min-w-[44px] flex items-center justify-center"
-                    aria-label="Cerrar menú"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  {navItems.map((item) => {
-                    const isActive = currentTab === item.id;
-                    const Icon = item.icon;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => handleNavClick(item.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-left transition-all min-h-[44px] ${
-                          isActive
-                            ? 'bg-[#442a22] text-[#fff8f6] shadow-sm'
-                            : 'bg-[#faf2f0] text-[#504441] hover:bg-[#efe6e4]'
-                        }`}
-                      >
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-[#D4AF37]' : 'text-[#75584d]'}`} strokeWidth={1.5} />
-                        <span className="truncate flex-1">{item.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-[#e9e1df] space-y-3">
-                {/* PWA Install Button (If supported by browser and not installed) */}
-                {window.matchMedia && !window.matchMedia('(display-mode: standalone)').matches && (
-                  <button
-                    onClick={() => {
-                      // Note: Real PWA install logic would hook into beforeinstallprompt event.
-                      // For now, this is a placeholder visually per requirements.
-                      alert('Para instalar: Toca "Compartir" y luego "Añadir a la pantalla de inicio" (iOS) o busca el botón "Instalar" (Android/Desktop).');
-                    }}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#faf2f0] text-[#442a22] font-semibold text-sm border border-[#e9e1df] hover:bg-[#efe6e4] transition-all min-h-[44px]"
-                  >
-                    <Download className="w-4 h-4" strokeWidth={1.5} />
-                    <span>Instalar Aplicación</span>
-                  </button>
-                )}
-
-                {session.user ? (
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2 px-2 text-xs font-semibold text-[#1e1b1a]">
-                      <UserCheck className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
-                      <span className="truncate max-w-[160px]">
-                        {session.user.name || session.user.email}
-                      </span>
+      {createPortal(
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <div className="fixed inset-0 z-[100] flex md:hidden bg-black/50 backdrop-blur-sm">
+              <motion.div
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="w-3/4 max-w-sm bg-[#fff8f6] h-full shadow-2xl border-r border-[#e9e1df] p-6 flex flex-col justify-between overflow-y-auto"
+              >
+                <div>
+                  <div className="flex items-center justify-between pb-4 border-b border-[#e9e1df] mb-6">
+                    <div className="flex items-center gap-2">
+                      <Church className="w-5 h-5 text-[#D4AF37]" />
+                      <h3 className="font-serif text-xl font-bold text-[#442a22]">
+                        Menú
+                      </h3>
                     </div>
                     <button
-                      onClick={() => {
-                        onLogout();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full text-sm font-semibold text-rose-700 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-rose-50 hover:bg-rose-100 transition-colors min-h-[44px]"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="p-2 rounded-full hover:bg-[#efe6e4] text-[#504441] min-h-[44px] min-w-[44px] flex items-center justify-center"
+                      aria-label="Cerrar menú"
                     >
-                      <LogOut className="w-4 h-4" strokeWidth={1.5} />
-                      <span>Cerrar Sesión</span>
+                      <X className="w-5 h-5" />
                     </button>
                   </div>
-                ) : (
-                  <button
-                    onClick={() => {
-                      onOpenAuth();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-sm shadow-sm hover:bg-[#5d4037] min-h-[44px]"
-                  >
-                    <Lock className="w-4 h-4 text-[#D4AF37]" strokeWidth={1.5} />
-                    <span>Admin</span>
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+
+                  <div className="space-y-2">
+                    {navItems.map((item) => {
+                      const isActive = currentTab === item.id;
+                      const Icon = item.icon;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => handleNavClick(item.id)}
+                          className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-left transition-all min-h-[44px] ${
+                            isActive
+                              ? 'bg-[#442a22] text-[#fff8f6] shadow-sm'
+                              : 'bg-[#faf2f0] text-[#504441] hover:bg-[#efe6e4]'
+                          }`}
+                        >
+                          <Icon className={`w-4 h-4 ${isActive ? 'text-[#D4AF37]' : 'text-[#75584d]'}`} strokeWidth={1.5} />
+                          <span className="truncate flex-1">{item.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-[#e9e1df] space-y-3">
+                  {/* PWA Install Button (If supported by browser and not installed) */}
+                  {window.matchMedia && !window.matchMedia('(display-mode: standalone)').matches && (
+                    <button
+                      onClick={() => {
+                        alert('Para instalar: Toca "Compartir" y luego "Añadir a la pantalla de inicio" (iOS) o busca el botón "Instalar" (Android/Desktop).');
+                      }}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#faf2f0] text-[#442a22] font-semibold text-sm border border-[#e9e1df] hover:bg-[#efe6e4] transition-all min-h-[44px]"
+                    >
+                      <Download className="w-4 h-4" strokeWidth={1.5} />
+                      <span>Instalar Aplicación</span>
+                    </button>
+                  )}
+
+                  {session.user ? (
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-2 px-2 text-xs font-semibold text-[#1e1b1a]">
+                        <UserCheck className="w-4 h-4 text-emerald-600 shrink-0" strokeWidth={1.5} />
+                        <span className="truncate max-w-[160px]">
+                          {session.user.name || session.user.email}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          onLogout();
+                          setMobileMenuOpen(false);
+                        }}
+                        className="w-full text-sm font-semibold text-rose-700 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-rose-50 hover:bg-rose-100 transition-colors min-h-[44px]"
+                      >
+                        <LogOut className="w-4 h-4" strokeWidth={1.5} />
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        onOpenAuth();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-sm shadow-sm hover:bg-[#5d4037] min-h-[44px]"
+                    >
+                      <Lock className="w-4 h-4 text-[#D4AF37]" strokeWidth={1.5} />
+                      <span>Admin</span>
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </header>
   );
 };
