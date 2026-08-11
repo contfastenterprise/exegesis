@@ -412,7 +412,7 @@ export function App() {
                             <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
                           </button>
                           <button
-                            onClick={() => toggleFavorite(sermon)}
+                            onClick={() => toggleSaveSermon(sermon)}
                             className="p-2 rounded-full hover:bg-[#efe6e4] text-rose-700"
                             title="Remover"
                           >
