@@ -176,6 +176,7 @@ export function App() {
   const featuredSermon = sermons.find((s) => s.isFeatured) || sermons[0] || null;
 
   const savedSermonsList = sermons.filter((s) => favoriteIds.includes(s.id));
+  const totalLikesInDb = sermons.reduce((sum, s) => sum + (s.likesCount || 0), 0);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fff8f6] text-[#1e1b1a]">
@@ -187,6 +188,7 @@ export function App() {
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onLogout={handleLogout}
         favoriteCount={savedSermonsList.length}
+        totalLikes={totalLikesInDb}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
         settings={settings}
       />

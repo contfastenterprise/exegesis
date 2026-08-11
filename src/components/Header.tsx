@@ -35,6 +35,7 @@ interface HeaderProps {
   onOpenAuth: () => void;
   onLogout: () => void;
   favoriteCount: number;
+  totalLikes?: number;
   onOpenFavorites: () => void;
   settings?: SystemSettings;
 }
@@ -46,6 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuth,
   onLogout,
   favoriteCount,
+  totalLikes = 0,
   onOpenFavorites,
   settings
 }) => {
@@ -183,6 +185,17 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             ) : null}
 
+            {/* Total Likes Indicator */}
+            {totalLikes > 0 && (
+              <div
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#faf2f0] border border-[#e9e1df] text-[#504441] mr-1"
+                title="Total de Me Gusta en todos los sermones"
+              >
+                <Heart className="w-4 h-4 fill-current text-red-500" />
+                <span className="text-xs font-bold">{totalLikes}</span>
+              </div>
+            )}
+
             {/* Saved / Favorites Counter Button */}
             <button
               onClick={onOpenFavorites}
@@ -230,7 +243,15 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Mobile Right Controls (Favorites) */}
-          <div className="flex md:hidden items-center shrink-0">
+          <div className="flex md:hidden items-center shrink-0 gap-1.5">
+            {totalLikes > 0 && (
+              <div
+                className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-[#faf2f0] border border-[#e9e1df] text-[#504441]"
+              >
+                <Heart className="w-3.5 h-3.5 fill-current text-red-500" />
+                <span className="text-[10px] font-bold">{totalLikes}</span>
+              </div>
+            )}
             <button
               onClick={onOpenFavorites}
               className="relative p-2 rounded-full text-[#504441] bg-[#faf2f0] border border-[#e9e1df]"
