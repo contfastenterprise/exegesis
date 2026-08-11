@@ -151,6 +151,8 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>Ver / Escuchar Mensaje</span>
+                </button>
+
                 <button
                   onClick={() => onToggleSave(featuredSermon)}
                   className="p-2.5 rounded-full bg-[#5d4037] text-[#fff8f6] hover:bg-[#75584d] transition-colors flex items-center justify-center"
