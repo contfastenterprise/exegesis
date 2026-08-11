@@ -588,8 +588,12 @@ export const DataService = {
             options: { data: { name } }
           });
           if (signUpError) {
-            console.warn('Supabase auth sign up error:', signUpError);
-            return null;
+            if (signUpError.message.toLowerCase().includes('already registered')) {
+              console.log('Usuario ya registrado en Auth, procediendo a agregarlo como admin_users');
+            } else {
+              console.warn('Supabase auth sign up error:', signUpError);
+              return null;
+            }
           }
         } catch (e) {
           console.warn('Supabase auth sign up exception:', e);
