@@ -146,7 +146,7 @@ export const SermonPlayerModal: React.FC<SermonPlayerModalProps> = ({
                 <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current text-[#D4AF37]' : ''}`} />
                 <span>
                   {isFavorite ? 'Guardado en Favoritos' : 'Guardar Sermón'}
-                  {sermon.likesCount !== undefined ? ` (${sermon.likesCount})` : ''}
+                  {` (${sermon.likesCount || 0})`}
                 </span>
               </button>
 
