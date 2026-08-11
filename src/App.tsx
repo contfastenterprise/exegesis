@@ -152,9 +152,7 @@ export function App() {
     }));
 
     // If using Supabase, hit the API
-    if (sermon.id.startsWith('sermon-') === false) {
-      await DataService.toggleSermonLike(sermon.id, isAdding);
-    }
+    await DataService.toggleSermonLike(sermon.id, isAdding);
   };
 
   const handleShare = (title: string) => {

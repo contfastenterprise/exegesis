@@ -240,7 +240,7 @@ export const DataService = {
   },
 
   async toggleSermonLike(sermonId: string, increment: boolean): Promise<void> {
-    if (supabase && !sermonId.startsWith('sermon-')) {
+    if (supabase) {
       try {
         const { error } = await supabase.rpc('toggle_sermon_like', {
           p_sermon_id: sermonId,
