@@ -1,0 +1,8 @@
+{
+  "name": "EXÉGESIS",
+  "description": "Aplicación web responsiva para la iglesia Gracia y Verdad con secciones públicas de sermones, actividades, ayuda y testimonios, y panel de administración protegido con Supabase Auth.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
