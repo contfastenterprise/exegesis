@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sermon } from '../types';
-import { Play, Pause, X, Heart, Share2, BookOpen, User, Calendar, Volume2 } from 'lucide-react';
+import { X, Play, Heart, Bookmark, Share2, Calendar, Clock, BookOpen, Volume2, User } from 'lucide-react';
+import { extractYouTubeVideoId } from '../lib/youtube';
 
 interface SermonPlayerModalProps {
   sermon: Sermon | null;
   onClose: () => void;
   isFavorite: boolean;
-  onToggleFavorite: (sermon: Sermon) => void;
+  isLiked: boolean;
+  onToggleSave: (sermon: Sermon) => void;
+  onToggleLike: (sermon: Sermon) => void;
   onShare: (title: string) => void;
 }
 
@@ -15,7 +18,9 @@ export const SermonPlayerModal: React.FC<SermonPlayerModalProps> = ({
   sermon,
   onClose,
   isFavorite,
-  onToggleFavorite,
+  isLiked,
+  onToggleSave,
+  onToggleLike,
   onShare
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -134,18 +139,32 @@ export const SermonPlayerModal: React.FC<SermonPlayerModalProps> = ({
             )}
 
             {/* Action buttons */}
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex flex-wrap items-center gap-3">
               <button
-                onClick={() => onToggleFavorite(sermon)}
+                onClick={() => onToggleSave(sermon)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold border transition-all ${
                   isFavorite
                     ? 'bg-[#442a22] text-[#fff8f6] border-[#442a22]'
                     : 'bg-[#faf2f0] text-[#504441] border-[#e9e1df] hover:bg-[#efe6e4]'
                 }`}
               >
-                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current text-[#D4AF37]' : ''}`} />
+                <Bookmark className={`w-4 h-4 ${isFavorite ? 'fill-current text-[#D4AF37]' : ''}`} />
                 <span>
-                  {isFavorite ? 'Guardado en Favoritos' : 'Guardar Sermón'}
+                  {isFavorite ? 'Guardado' : 'Guardar Sermón'}
+                </span>
+              </button>
+
+              <button
+                onClick={() => onToggleLike(sermon)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold border transition-all ${
+                  isLiked
+                    ? 'bg-[#442a22] text-[#fff8f6] border-[#442a22]'
+                    : 'bg-[#faf2f0] text-[#504441] border-[#e9e1df] hover:bg-[#efe6e4]'
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${isLiked ? 'fill-current text-[#D4AF37]' : ''}`} />
+                <span>
+                  {isLiked ? 'Te gusta' : 'Me gusta'}
                   {` (${sermon.likesCount || 0})`}
                 </span>
               </button>

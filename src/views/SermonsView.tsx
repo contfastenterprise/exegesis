@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Sermon } from '../types';
-import { Play, Heart, Share2, Search, Filter, BookOpen, Calendar, User } from 'lucide-react';
+import { Play, Search, Filter, Calendar, BookOpen, Share2, Heart, Bookmark, User } from 'lucide-react';
 
 interface SermonsViewProps {
   sermons: Sermon[];
   onOpenSermonModal: (sermon: Sermon) => void;
   favorites: string[];
-  onToggleFavorite: (sermon: Sermon) => void;
+  likedIds: string[];
+  onToggleSave: (sermon: Sermon) => void;
+  onToggleLike: (sermon: Sermon) => void;
   onShare: (title: string) => void;
 }
 
@@ -14,8 +16,10 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
   sermons,
   onOpenSermonModal,
   favorites,
-  onToggleFavorite,
-  onShare
+  likedIds,
+  onToggleSave,
+  onToggleLike,
+  onShare,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSeries, setSelectedSeries] = useState<string>('all');
@@ -147,14 +151,22 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>Ver / Escuchar Mensaje</span>
+                <button
+                  onClick={() => onToggleSave(featuredSermon)}
+                  className="p-2.5 rounded-full bg-[#5d4037] text-[#fff8f6] hover:bg-[#75584d] transition-colors flex items-center justify-center"
+                  aria-label="Guardar sermón"
+                  title="Guardar sermón"
+                >
+                  <Bookmark className={`w-4 h-4 ${favorites.includes(featuredSermon.id) ? 'fill-current text-[#D4AF37]' : ''}`} />
                 </button>
 
                 <button
-                  onClick={() => onToggleFavorite(featuredSermon)}
+                  onClick={() => onToggleLike(featuredSermon)}
                   className="p-2.5 rounded-full bg-[#5d4037] text-[#fff8f6] hover:bg-[#75584d] transition-colors flex items-center gap-1.5"
-                  aria-label="Guardar sermón"
+                  aria-label="Me gusta"
+                  title="Me gusta"
                 >
-                  <Heart className={`w-4 h-4 ${favorites.includes(featuredSermon.id) ? 'fill-current text-[#D4AF37]' : ''}`} />
+                  <Heart className={`w-4 h-4 ${likedIds.includes(featuredSermon.id) ? 'fill-current text-[#D4AF37]' : ''}`} />
                   <span className="text-xs font-semibold">{featuredSermon.likesCount || 0}</span>
                 </button>
               </div>
@@ -208,18 +220,33 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
                         </div>
                       </button>
 
-                      {/* Favorite Badge */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onToggleFavorite(sermon);
-                        }}
-                        className="absolute top-3 right-3 px-2.5 py-1.5 rounded-full bg-black/40 text-[#fff8f6] hover:bg-black/60 backdrop-blur-sm transition-colors flex items-center gap-1"
-                        aria-label="Guardar a favoritos"
-                      >
-                        <Heart className={`w-4 h-4 ${isFav ? 'fill-current text-[#D4AF37]' : ''}`} />
-                        <span className="text-xs font-semibold">{sermon.likesCount || 0}</span>
-                      </button>
+                      {/* Like and Save Badges */}
+                      <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleSave(sermon);
+                          }}
+                          className="px-2.5 py-1.5 rounded-full bg-black/40 text-[#fff8f6] hover:bg-black/60 backdrop-blur-sm transition-colors flex items-center justify-center"
+                          aria-label="Guardar a favoritos"
+                          title="Guardar sermón"
+                        >
+                          <Bookmark className={`w-4 h-4 ${isFav ? 'fill-current text-[#D4AF37]' : ''}`} />
+                        </button>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleLike(sermon);
+                          }}
+                          className="px-2.5 py-1.5 rounded-full bg-black/40 text-[#fff8f6] hover:bg-black/60 backdrop-blur-sm transition-colors flex items-center gap-1"
+                          aria-label="Me gusta"
+                          title="Me gusta"
+                        >
+                          <Heart className={`w-4 h-4 ${likedIds.includes(sermon.id) ? 'fill-current text-[#D4AF37]' : ''}`} />
+                          <span className="text-xs font-semibold">{sermon.likesCount || 0}</span>
+                        </button>
+                      </div>
                     </div>
 
                     {/* Content */}

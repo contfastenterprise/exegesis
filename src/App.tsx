@@ -51,6 +51,14 @@ export function App() {
       return ['sermon-1'];
     }
   });
+  const [likedIds, setLikedIds] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('gt_likes_v1');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
 
   // Modals state
@@ -116,13 +124,10 @@ export function App() {
     loadAllData();
   }, []);
 
-  // Save favorites to localStorage and update DB
-  const toggleFavorite = async (sermon: Sermon) => {
-    let isAdding = false;
-    
+  // Save favorites to localStorage (Bookmark)
+  const toggleSaveSermon = (sermon: Sermon) => {
     setFavoriteIds((prev) => {
       const isFav = prev.includes(sermon.id);
-      isAdding = !isFav;
       const updated = isFav ? prev.filter((id) => id !== sermon.id) : [...prev, sermon.id];
       try {
         localStorage.setItem('gt_favorites_v1', JSON.stringify(updated));
@@ -130,12 +135,29 @@ export function App() {
         console.warn('Error saving favorites', e);
       }
 
-      if (isAdding) {
+      if (!isFav) {
         addToast('Sermón guardado', `"${sermon.title}" se agregó a tus sermones guardados.`, 'info');
       } else {
         addToast('Sermón eliminado de guardados', `"${sermon.title}" fue removido.`, 'info');
       }
 
+      return updated;
+    });
+  };
+
+  // Like sermon (Heart)
+  const toggleLikeSermon = async (sermon: Sermon) => {
+    let isAdding = false;
+    
+    setLikedIds((prev) => {
+      const isLiked = prev.includes(sermon.id);
+      isAdding = !isLiked;
+      const updated = isLiked ? prev.filter((id) => id !== sermon.id) : [...prev, sermon.id];
+      try {
+        localStorage.setItem('gt_likes_v1', JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Error saving likes', e);
+      }
       return updated;
     });
 
@@ -202,6 +224,8 @@ export function App() {
             featuredSermon={featuredSermon}
             settings={settings}
             leaders={leaders}
+            likedIds={likedIds}
+            onToggleLike={toggleLikeSermon}
           />
         )}
 
@@ -210,7 +234,9 @@ export function App() {
             sermons={sermons}
             onOpenSermonModal={(sermon) => setSelectedSermonForPlayer(sermon)}
             favorites={favoriteIds}
-            onToggleFavorite={toggleFavorite}
+            likedIds={likedIds}
+            onToggleSave={toggleSaveSermon}
+            onToggleLike={toggleLikeSermon}
             onShare={handleShare}
           />
         )}
@@ -297,7 +323,9 @@ export function App() {
         sermon={selectedSermonForPlayer}
         onClose={() => setSelectedSermonForPlayer(null)}
         isFavorite={selectedSermonForPlayer ? favoriteIds.includes(selectedSermonForPlayer.id) : false}
-        onToggleFavorite={toggleFavorite}
+        isLiked={selectedSermonForPlayer ? likedIds.includes(selectedSermonForPlayer.id) : false}
+        onToggleSave={() => selectedSermonForPlayer && toggleSaveSermon(selectedSermonForPlayer)}
+        onToggleLike={() => selectedSermonForPlayer && toggleLikeSermon(selectedSermonForPlayer)}
         onShare={handleShare}
       />
 
