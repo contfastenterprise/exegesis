@@ -8,7 +8,7 @@ import {
   INITIAL_SYSTEM_SETTINGS,
   INITIAL_LEADERS 
 } from '../data/initialData';
-import { Sermon, ActivityEvent, PrayerRequest, EventRegistration, CommunityPost, SystemSettings, UserSession, ChurchLeader, AdminUser } from '../types';
+import { Sermon, ActivityEvent, PrayerRequest, EventRegistration, CommunityPost, SystemSettings, UserSession, ChurchLeader, AdminUser, Devotional } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -32,7 +32,8 @@ const STORAGE_KEYS = {
   POSTS: 'gt_posts_v1',
   SETTINGS: 'gt_settings_v1',
   LEADERS: 'gt_leaders_v1',
-  AUTH: 'gt_auth_v1'
+  AUTH: 'gt_auth_v1',
+  DEVOTIONALS: 'gt_devotionals_v1'
 };
 
 // Helper to get or initialize local storage
@@ -56,6 +57,89 @@ function setStoredItem<T>(key: string, value: T): void {
 
 // Data Services
 export const DataService = {
+  // Devotionals
+  async getDevotionals(): Promise<Devotional[]> {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('devotionals').select('*').order('date', { ascending: false });
+        if (!error && data) return data as Devotional[];
+      } catch (err) {
+        console.warn('Supabase devotionals fetch error:', err);
+      }
+    }
+    return getStoredItem<Devotional[]>(STORAGE_KEYS.DEVOTIONALS, []);
+  },
+
+  async addDevotional(devotional: Omit<Devotional, 'id' | 'createdAt'>): Promise<Devotional> {
+    const newDevotional: Devotional = {
+      ...devotional,
+      id: 'devo-' + Date.now(),
+      createdAt: new Date().toISOString()
+    };
+
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('devotionals').insert([newDevotional]).select().single();
+        if (!error && data) return data as Devotional;
+      } catch (err) {
+        console.warn('Supabase add devotional error:', err);
+      }
+    }
+    
+    const devotionals = getStoredItem<Devotional[]>(STORAGE_KEYS.DEVOTIONALS, []);
+    const updated = [newDevotional, ...devotionals];
+    setStoredItem(STORAGE_KEYS.DEVOTIONALS, updated);
+    return newDevotional;
+  },
+
+  async updateDevotional(devotional: Devotional): Promise<Devotional> {
+    if (supabase) {
+      try {
+        await supabase.from('devotionals').update(devotional).eq('id', devotional.id);
+      } catch (err) {
+        console.warn('Supabase update devotional error:', err);
+      }
+    }
+    const devotionals = getStoredItem<Devotional[]>(STORAGE_KEYS.DEVOTIONALS, []);
+    const updated = devotionals.map(d => d.id === devotional.id ? devotional : d);
+    setStoredItem(STORAGE_KEYS.DEVOTIONALS, updated);
+    return devotional;
+  },
+
+  async deleteDevotional(id: string): Promise<void> {
+    if (supabase) {
+      try {
+        await supabase.from('devotionals').delete().eq('id', id);
+      } catch (err) {
+        console.warn('Supabase delete devotional error:', err);
+      }
+    }
+    const devotionals = getStoredItem<Devotional[]>(STORAGE_KEYS.DEVOTIONALS, []);
+    const updated = devotionals.filter(d => d.id !== id);
+    setStoredItem(STORAGE_KEYS.DEVOTIONALS, updated);
+  },
+
+  async uploadDevotionalMedia(file: File): Promise<string | null> {
+    if (!supabase) return null;
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+      const { error: uploadError } = await supabase.storage.from('devotionals').upload(filePath, file);
+      
+      if (uploadError) {
+        console.error('Error uploading to devotionals bucket:', uploadError);
+        return null;
+      }
+      
+      const { data } = supabase.storage.from('devotionals').getPublicUrl(filePath);
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Exception uploading devotional media:', error);
+      return null;
+    }
+  },
+
   // Sermons
   async getSermons(): Promise<Sermon[]> {
     if (supabase) {

@@ -1,4 +1,16 @@
-export type NavTab = 'home' | 'sermons' | 'activities' | 'leaders' | 'location' | 'help' | 'interactions' | 'admin';
+export type NavTab = 'home' | 'sermons' | 'activities' | 'leaders' | 'location' | 'help' | 'interactions' | 'devotionals' | 'admin';
+
+export interface Devotional {
+  id: string;
+  title: string;
+  type: 'text' | 'image' | 'video' | 'youtube';
+  content?: string;
+  mediaUrl?: string;
+  youtubeUrl?: string;
+  author?: string;
+  date: string;
+  createdAt: string;
+}
 
 export interface ChurchLeader {
   id: string;

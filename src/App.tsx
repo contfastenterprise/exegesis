@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavTab, Sermon, ActivityEvent, PrayerRequest, EventRegistration, CommunityPost, SystemSettings, UserSession, ChurchLeader } from './types';
+import { NavTab, Sermon, ActivityEvent, PrayerRequest, EventRegistration, CommunityPost, SystemSettings, UserSession, ChurchLeader, Devotional } from './types';
 import { DataService, AuthService } from './lib/supabase';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -15,6 +15,7 @@ import { HelpView } from './views/HelpView';
 import { InteractionsView } from './views/InteractionsView';
 import { LeadersView } from './views/LeadersView';
 import { LocationView } from './views/LocationView';
+import { DevotionalsView } from './views/DevotionalsView';
 import { AdminView } from './views/AdminView';
 
 import { Heart, Play, X, BookOpen, ArrowRight } from 'lucide-react';
@@ -31,6 +32,7 @@ export function App() {
   const [registrations, setRegistrations] = useState<EventRegistration[]>([]);
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [leaders, setLeaders] = useState<ChurchLeader[]>([]);
+  const [devotionals, setDevotionals] = useState<Devotional[]>([]);
   const [settings, setSettings] = useState<SystemSettings>({
     maintenanceMode: false,
     primaryColor: '#5D4037',
@@ -82,6 +84,7 @@ export function App() {
           fetchedRegs,
           fetchedPosts,
           fetchedLeaders,
+          fetchedDevotionals,
           fetchedSettings,
           userSession
         ] = await Promise.all([
@@ -91,6 +94,7 @@ export function App() {
           DataService.getRegistrations(),
           DataService.getPosts(),
           DataService.getLeaders(),
+          DataService.getDevotionals(),
           DataService.getSettings(),
           AuthService.getCurrentUserSession()
         ]);
@@ -101,6 +105,7 @@ export function App() {
         setRegistrations(fetchedRegs);
         setPosts(fetchedPosts);
         setLeaders(fetchedLeaders);
+        setDevotionals(fetchedDevotionals);
         setSettings(fetchedSettings);
         setSession(userSession);
       } catch (err) {
@@ -197,6 +202,10 @@ export function App() {
           />
         )}
 
+        {currentTab === 'devotionals' && (
+          <DevotionalsView devotionals={devotionals} />
+        )}
+
         {currentTab === 'leaders' && (
           <LeadersView
             leaders={leaders}
@@ -237,6 +246,8 @@ export function App() {
             registrations={registrations}
             leaders={leaders}
             onLeadersUpdated={setLeaders}
+            devotionals={devotionals}
+            onDevotionalsUpdated={setDevotionals}
             settings={settings}
             onSettingsUpdated={setSettings}
             onSuccessToast={(msg) => addToast('Éxito', msg, 'success')}

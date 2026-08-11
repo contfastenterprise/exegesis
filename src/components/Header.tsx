@@ -23,7 +23,8 @@ import {
   MapPin,
   MessageSquareQuote,
   HelpCircle,
-  Download
+  Download,
+  Sun
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -52,6 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
   const navItems: { id: NavTab; label: string; icon: React.ElementType; isProtected?: boolean }[] = [
     { id: 'home', label: 'Inicio', icon: Home },
     { id: 'sermons', label: 'Sermones', icon: BookOpen },
+    { id: 'devotionals', label: 'Devocionales', icon: Sun },
     { id: 'activities', label: 'Actividades', icon: Calendar },
     { id: 'leaders', label: 'Líderes', icon: Users },
     { id: 'location', label: 'Ubicación', icon: MapPin },

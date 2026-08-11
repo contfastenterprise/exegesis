@@ -166,6 +166,11 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, onOpenAuth, setting
                 </button>
               </li>
               <li>
+                <button onClick={() => onSelectTab('devotionals')} className="hover:text-[#D4AF37] transition-colors">
+                  Devocionales Diarios
+                </button>
+              </li>
+              <li>
                 <button onClick={() => onSelectTab('activities')} className="hover:text-[#D4AF37] transition-colors">
                   Actividades y Eventos
                 </button>

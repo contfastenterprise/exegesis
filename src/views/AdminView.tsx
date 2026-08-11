@@ -7,7 +7,8 @@ import {
   EventRegistration, 
   SystemSettings,
   ChurchLeader,
-  AdminUser
+  AdminUser,
+  Devotional
 } from '../types';
 import { 
   Lock, 
@@ -46,7 +47,9 @@ import {
   Edit,
   Phone,
   MapPin,
-  Mail
+  Mail,
+  Sun,
+  Play
 } from 'lucide-react';
 import { DataService, isSupabaseConfigured } from '../lib/supabase';
 import { extractYouTubeVideoId, getYouTubeThumbnailUrl } from '../lib/youtube';
@@ -63,6 +66,8 @@ interface AdminViewProps {
   registrations: EventRegistration[];
   leaders: ChurchLeader[];
   onLeadersUpdated: (leaders: ChurchLeader[]) => void;
+  devotionals: Devotional[];
+  onDevotionalsUpdated: (devotionals: Devotional[]) => void;
   settings: SystemSettings;
   onSettingsUpdated: (settings: SystemSettings) => void;
   onSuccessToast: (msg: string) => void;
@@ -81,11 +86,24 @@ export const AdminView: React.FC<AdminViewProps> = ({
   registrations,
   leaders,
   onLeadersUpdated,
+  devotionals,
+  onDevotionalsUpdated,
   settings,
   onSettingsUpdated,
   onSuccessToast
 }) => {
-  const [activeAdminTab, setActiveAdminTab] = useState<'dashboard' | 'prayers' | 'sermons' | 'events' | 'leaders' | 'settings' | 'admins'>('dashboard');
+  const [activeAdminTab, setActiveAdminTab] = useState<'dashboard' | 'prayers' | 'sermons' | 'devotionals' | 'events' | 'leaders' | 'settings' | 'admins'>('dashboard');
+
+  // Form states for adding devotional
+  const [devotionalTitle, setDevotionalTitle] = useState('');
+  const [devotionalType, setDevotionalType] = useState<'text' | 'image' | 'video' | 'youtube'>('text');
+  const [devotionalContent, setDevotionalContent] = useState('');
+  const [devotionalMediaUrl, setDevotionalMediaUrl] = useState('');
+  const [devotionalYoutubeUrl, setDevotionalYoutubeUrl] = useState('');
+  const [devotionalAuthor, setDevotionalAuthor] = useState('');
+  const [devotionalDate, setDevotionalDate] = useState('');
+  const [isUploadingDevotionalMedia, setIsUploadingDevotionalMedia] = useState(false);
+  const devotionalMediaFileInputRef = useRef<HTMLInputElement>(null);
 
   // Form states for managing admin users
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
@@ -664,6 +682,249 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab Content: Devotionals */}
+      {activeAdminTab === 'devotionals' && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div>
+              <h2 className="font-serif text-2xl font-bold text-[#442a22]">Gestión de Devocionales</h2>
+              <p className="text-sm text-[#75584d] mt-1">Sube texto, imágenes, video, o enlaces a YouTube.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!devotionalTitle) {
+                    alert('El título es requerido');
+                    return;
+                  }
+
+                  let finalMediaUrl = devotionalMediaUrl;
+                  if (devotionalType === 'image' || devotionalType === 'video') {
+                    if (devotionalMediaFileInputRef.current?.files?.[0]) {
+                      setIsUploadingDevotionalMedia(true);
+                      const uploadedUrl = await DataService.uploadDevotionalMedia(devotionalMediaFileInputRef.current.files[0]);
+                      setIsUploadingDevotionalMedia(false);
+                      if (uploadedUrl) {
+                        finalMediaUrl = uploadedUrl;
+                      } else {
+                        alert('Error al subir el archivo multimedia.');
+                        return;
+                      }
+                    } else if (!finalMediaUrl) {
+                      alert('Selecciona un archivo para el devocional.');
+                      return;
+                    }
+                  }
+
+                  const newDevo = await DataService.addDevotional({
+                    title: devotionalTitle,
+                    type: devotionalType,
+                    content: devotionalContent,
+                    mediaUrl: finalMediaUrl,
+                    youtubeUrl: devotionalYoutubeUrl,
+                    author: devotionalAuthor,
+                    date: devotionalDate || new Date().toISOString().split('T')[0]
+                  });
+                  onDevotionalsUpdated([newDevo, ...devotionals]);
+                  
+                  // Reset form
+                  setDevotionalTitle('');
+                  setDevotionalContent('');
+                  setDevotionalMediaUrl('');
+                  setDevotionalYoutubeUrl('');
+                  setDevotionalAuthor('');
+                  if (devotionalMediaFileInputRef.current) {
+                    devotionalMediaFileInputRef.current.value = '';
+                  }
+                  onSuccessToast('Devocional agregado exitosamente.');
+                }} 
+                className="bg-[#faf2f0] border border-[#e9e1df] rounded-2xl p-6 shadow-sm space-y-4"
+              >
+                <h3 className="font-serif text-lg font-bold text-[#442a22] flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-[#D4AF37]" />
+                  Nuevo Devocional
+                </h3>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#75584d] mb-1">Título *</label>
+                    <input 
+                      required
+                      type="text" 
+                      className="w-full bg-white border border-[#e9e1df] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+                      placeholder="Ej. La fe que mueve montañas"
+                      value={devotionalTitle}
+                      onChange={(e) => setDevotionalTitle(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#75584d] mb-1">Tipo de Devocional *</label>
+                    <select
+                      className="w-full bg-white border border-[#e9e1df] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#D4AF37]"
+                      value={devotionalType}
+                      onChange={(e) => setDevotionalType(e.target.value as any)}
+                    >
+                      <option value="text">Texto</option>
+                      <option value="image">Imagen</option>
+                      <option value="video">Video (Subida directa)</option>
+                      <option value="youtube">Video (YouTube)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#75584d] mb-1">Autor (Opcional)</label>
+                    <input 
+                      type="text" 
+                      className="w-full bg-white border border-[#e9e1df] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#D4AF37]"
+                      placeholder="Nombre del autor"
+                      value={devotionalAuthor}
+                      onChange={(e) => setDevotionalAuthor(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#75584d] mb-1">Fecha</label>
+                    <input 
+                      type="date" 
+                      className="w-full bg-white border border-[#e9e1df] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#D4AF37]"
+                      value={devotionalDate}
+                      onChange={(e) => setDevotionalDate(e.target.value)}
+                    />
+                  </div>
+
+                  {devotionalType === 'text' && (
+                    <div>
+                      <label className="block text-xs font-semibold text-[#75584d] mb-1">Contenido *</label>
+                      <textarea 
+                        required
+                        className="w-full bg-white border border-[#e9e1df] rounded-xl px-3 py-2 text-sm h-32 resize-none focus:outline-none focus:border-[#D4AF37]"
+                        placeholder="Escribe el devocional aquí..."
+                        value={devotionalContent}
+                        onChange={(e) => setDevotionalContent(e.target.value)}
+                      />
+                    </div>
+                  )}
+
+                  {(devotionalType === 'image' || devotionalType === 'video') && (
+                    <div>
+                      <label className="block text-xs font-semibold text-[#75584d] mb-1">Subir Archivo *</label>
+                      <input 
+                        type="file" 
+                        accept={devotionalType === 'image' ? "image/*" : "video/*"}
+                        ref={devotionalMediaFileInputRef}
+                        className="w-full text-sm text-[#75584d] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#442a22] file:text-[#fff8f6] hover:file:bg-[#5d4037] transition-all"
+                      />
+                    </div>
+                  )}
+
+                  {devotionalType === 'youtube' && (
+                    <div>
+                      <label className="block text-xs font-semibold text-[#75584d] mb-1">URL de YouTube *</label>
+                      <input 
+                        type="url" 
+                        required
+                        className="w-full bg-white border border-[#e9e1df] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#D4AF37]"
+                        placeholder="https://www.youtube.com/watch?v=..."
+                        value={devotionalYoutubeUrl}
+                        onChange={(e) => setDevotionalYoutubeUrl(e.target.value)}
+                      />
+                      {devotionalYoutubeUrl && extractYouTubeVideoId(devotionalYoutubeUrl) && (
+                        <div className="mt-3 rounded-xl overflow-hidden shadow-sm aspect-video bg-black">
+                          <iframe 
+                            src={`https://www.youtube.com/embed/${extractYouTubeVideoId(devotionalYoutubeUrl)}`}
+                            className="w-full h-full"
+                            allowFullScreen
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <button 
+                  type="submit"
+                  disabled={isUploadingDevotionalMedia}
+                  className="w-full mt-4 flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#b08d24] text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all"
+                >
+                  {isUploadingDevotionalMedia ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4" />
+                  )}
+                  {isUploadingDevotionalMedia ? 'Subiendo...' : 'Publicar Devocional'}
+                </button>
+              </form>
+            </div>
+
+            <div className="lg:col-span-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {devotionals.map((devo) => (
+                  <div key={devo.id} className="bg-white rounded-2xl border border-[#e9e1df] p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-serif font-bold text-[#442a22] leading-tight line-clamp-2">
+                        {devo.title}
+                      </h4>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#efe6e4] text-[#75584d] ml-2 shrink-0">
+                        {devo.type}
+                      </span>
+                    </div>
+                    {devo.type === 'youtube' && devo.youtubeUrl && (
+                      <div className="w-full h-32 rounded-xl mb-3 overflow-hidden bg-black/5 relative">
+                        <img 
+                          src={getYouTubeThumbnailUrl(devo.youtubeUrl)} 
+                          alt="Thumbnail"
+                          className="w-full h-full object-cover" 
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-red-600/90 flex items-center justify-center text-white backdrop-blur-sm">
+                            <Play className="w-4 h-4 ml-0.5 fill-current" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {devo.type === 'image' && devo.mediaUrl && (
+                      <div className="w-full h-32 rounded-xl mb-3 overflow-hidden bg-black/5 relative">
+                         <img src={devo.mediaUrl} alt="Devotional media" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="text-xs text-[#75584d]">
+                        {devo.author && <span className="font-semibold block">{devo.author}</span>}
+                        {devo.date}
+                      </div>
+                      <button 
+                        onClick={async () => {
+                          if(confirm('¿Eliminar este devocional?')) {
+                            await DataService.deleteDevotional(devo.id);
+                            onDevotionalsUpdated(devotionals.filter(d => d.id !== devo.id));
+                            onSuccessToast('Devocional eliminado.');
+                          }
+                        }}
+                        className="p-2 text-[#75584d] hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors"
+                        title="Eliminar devocional"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {devotionals.length === 0 && (
+                  <div className="col-span-2 text-center py-12 text-[#75584d] bg-[#faf2f0] rounded-2xl border border-dashed border-[#e9e1df]">
+                    <Sun className="w-12 h-12 mx-auto text-[#D4AF37]/50 mb-3" />
+                    <p className="font-medium text-[#442a22]">Aún no hay devocionales publicados.</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
