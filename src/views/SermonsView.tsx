@@ -155,7 +155,7 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
                   aria-label="Guardar sermón"
                 >
                   <Heart className={`w-4 h-4 ${favorites.includes(featuredSermon.id) ? 'fill-current text-[#D4AF37]' : ''}`} />
-                  {featuredSermon.likesCount ? (
+                  {featuredSermon.likesCount !== undefined ? (
                     <span className="text-xs font-semibold">{featuredSermon.likesCount}</span>
                   ) : null}
                 </button>
@@ -220,7 +220,7 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
                         aria-label="Guardar a favoritos"
                       >
                         <Heart className={`w-4 h-4 ${isFav ? 'fill-current text-[#D4AF37]' : ''}`} />
-                        {sermon.likesCount ? (
+                        {sermon.likesCount !== undefined ? (
                           <span className="text-xs font-semibold">{sermon.likesCount}</span>
                         ) : null}
                       </button>

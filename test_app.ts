@@ -1,0 +1,1 @@
+import { DataService } from './src/lib/supabase.ts'; async function test() { const s = await DataService.getSermons(); console.log('first sermon likesCount:', s[0].likesCount, 'title:', s[0].title); } test();
