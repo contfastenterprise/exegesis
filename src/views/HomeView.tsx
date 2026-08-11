@@ -415,7 +415,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             ) : (() => {
               const hasYoutube = featuredSermon.youtubeUrl && extractYouTubeVideoId(featuredSermon.youtubeUrl);
               const featuredImageUrl = hasYoutube 
-                ? `https://img.youtube.com/vi/${extractYouTubeVideoId(featuredSermon.youtubeUrl)}/maxresdefault.jpg`
+                ? `https://img.youtube.com/vi/${extractYouTubeVideoId(featuredSermon.youtubeUrl)}/hqdefault.jpg`
                 : featuredSermon.imageUrl;
               
               const handlePlay = () => {
@@ -452,6 +452,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         <span>Ver en YouTube</span>
                       </div>
                     )}
+                    {/* Add likes count indicator on the thumbnail */}
+                    <div className="absolute top-3 left-3 bg-black/40 text-[#fff8f6] px-2.5 py-1.5 rounded-full text-xs font-bold shadow-md flex items-center gap-1.5 backdrop-blur-sm">
+                      <Heart className="w-3.5 h-3.5 fill-current text-[#D4AF37]" />
+                      <span>{featuredSermon.likesCount || 0}</span>
+                    </div>
                   </div>
 
                   <div className="space-y-3">
