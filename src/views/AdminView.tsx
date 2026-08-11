@@ -568,6 +568,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
           { id: 'dashboard', label: 'Resumen & Estadísticas', icon: Sparkles },
           { id: 'prayers', label: `Peticiones (${prayerRequests.length})`, icon: Heart },
           { id: 'sermons', label: 'Gestión de Sermones', icon: BookOpen },
+          { id: 'devotionals', label: 'Gestión de Devocionales', icon: Sun },
           { id: 'events', label: 'Gestión de Eventos', icon: Calendar },
           { id: 'leaders', label: `Pastores & Líderes (${leaders.length})`, icon: Users },
           { id: 'admins', label: `Administradores (${adminUsers.length})`, icon: ShieldCheck },
