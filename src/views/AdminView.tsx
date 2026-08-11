@@ -632,7 +632,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
             </h3>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-[#1e1b1a]">
+              <table className="w-full text-left text-xs text-[#1e1b1a] min-w-[600px] whitespace-nowrap">
                 <thead className="bg-[#efe6e4] text-[#75584d] font-bold uppercase tracking-wider">
                   <tr>
                     <th className="p-3 rounded-l-xl">Evento</th>
