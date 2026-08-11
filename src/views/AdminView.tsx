@@ -49,7 +49,8 @@ import {
   MapPin,
   Mail,
   Sun,
-  Play
+  Play,
+  ChevronDown
 } from 'lucide-react';
 import { DataService, isSupabaseConfigured } from '../lib/supabase';
 import { extractYouTubeVideoId, getYouTubeThumbnailUrl } from '../lib/youtube';
@@ -1715,7 +1716,17 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
           <form onSubmit={handleSaveSettings} className="space-y-6">
             
-            {/* Logo Customization Box */}
+            <details open className="group bg-[#faf2f0] border border-[#e9e1df] rounded-2xl overflow-hidden shadow-sm">
+              <summary className="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-[#faf2f0] transition-colors outline-none focus:bg-[#faf2f0]">
+                <div>
+                  <h4 className="font-serif text-lg font-bold text-[#442a22]">Identidad y Marca</h4>
+                  <p className="text-xs text-[#75584d] mt-0.5">Logo, nombre de la iglesia e información de contacto.</p>
+                </div>
+                <ChevronDown className="w-5 h-5 text-[#75584d] group-open:rotate-180 transition-transform duration-300" />
+              </summary>
+              <div className="p-5 border-t border-[#e9e1df] space-y-6 bg-[#faf2f0]">
+              
+              {/* Logo Customization Box */}
             <div className="p-5 rounded-2xl bg-[#fff8f6] border border-[#e9e1df] space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -1834,6 +1845,75 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* General Info Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase text-[#1e1b1a] mb-1">
+                  Nombre de la Iglesia
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={churchName}
+                  onChange={(e) => setChurchName(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#fff8f6] border border-[#e9e1df] text-sm text-[#1e1b1a]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase text-[#1e1b1a] mb-1">
+                  Correo Electrónico
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={churchEmail}
+                  onChange={(e) => setChurchEmail(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#fff8f6] border border-[#e9e1df] text-sm text-[#1e1b1a]"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase text-[#1e1b1a] mb-1">
+                  Dirección
+                </label>
+                <input
+                  type="text"
+                  value={churchAddr}
+                  onChange={(e) => setChurchAddr(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#fff8f6] border border-[#e9e1df] text-sm text-[#1e1b1a]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase text-[#1e1b1a] mb-1">
+                  Teléfono de Contacto
+                </label>
+                <input
+                  type="text"
+                  value={churchPhone}
+                  onChange={(e) => setChurchPhone(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#fff8f6] border border-[#e9e1df] text-sm text-[#1e1b1a]"
+                />
+              </div>
+            </div>
+
+            
+            </div>
+            </details>
+
+            <details open className="group bg-[#faf2f0] border border-[#e9e1df] rounded-2xl overflow-hidden shadow-sm">
+              <summary className="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-[#faf2f0] transition-colors outline-none focus:bg-[#faf2f0]">
+                <div>
+                  <h4 className="font-serif text-lg font-bold text-[#442a22]">Diseño de Portada</h4>
+                  <p className="text-xs text-[#75584d] mt-0.5">Banner principal, carrusel y versículos rotativos.</p>
+                </div>
+                <ChevronDown className="w-5 h-5 text-[#75584d] group-open:rotate-180 transition-transform duration-300" />
+              </summary>
+              <div className="p-5 border-t border-[#e9e1df] space-y-6 bg-[#faf2f0]">
 
             {/* Portada Principal / Textos de Bienvenida & Fondo de la Biblia */}
             <div className="p-5 rounded-2xl bg-[#fff8f6] border border-[#e9e1df] space-y-4">
@@ -2133,60 +2213,18 @@ export const AdminView: React.FC<AdminViewProps> = ({
               </div>
             </div>
 
-            {/* General Info Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-[#1e1b1a] mb-1">
-                  Nombre de la Iglesia
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={churchName}
-                  onChange={(e) => setChurchName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#fff8f6] border border-[#e9e1df] text-sm text-[#1e1b1a]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase text-[#1e1b1a] mb-1">
-                  Correo Electrónico
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={churchEmail}
-                  onChange={(e) => setChurchEmail(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#fff8f6] border border-[#e9e1df] text-sm text-[#1e1b1a]"
-                />
-              </div>
             </div>
+            </details>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-[#1e1b1a] mb-1">
-                  Dirección
-                </label>
-                <input
-                  type="text"
-                  value={churchAddr}
-                  onChange={(e) => setChurchAddr(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#fff8f6] border border-[#e9e1df] text-sm text-[#1e1b1a]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase text-[#1e1b1a] mb-1">
-                  Teléfono de Contacto
-                </label>
-                <input
-                  type="text"
-                  value={churchPhone}
-                  onChange={(e) => setChurchPhone(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#fff8f6] border border-[#e9e1df] text-sm text-[#1e1b1a]"
-                />
-              </div>
-            </div>
+            <details open className="group bg-[#faf2f0] border border-[#e9e1df] rounded-2xl overflow-hidden shadow-sm">
+              <summary className="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-[#faf2f0] transition-colors outline-none focus:bg-[#faf2f0]">
+                <div>
+                  <h4 className="font-serif text-lg font-bold text-[#442a22]">Multimedia</h4>
+                  <p className="text-xs text-[#75584d] mt-0.5">Canal de YouTube y Transmisiones en vivo.</p>
+                </div>
+                <ChevronDown className="w-5 h-5 text-[#75584d] group-open:rotate-180 transition-transform duration-300" />
+              </summary>
+              <div className="p-5 border-t border-[#e9e1df] space-y-6 bg-[#faf2f0]">
 
             {/* YouTube & Live Streaming Section Box */}
             <div className="p-5 rounded-2xl bg-[#fff8f6] border border-[#e9e1df] space-y-4">
@@ -2314,6 +2352,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
               </div>
             </div>
 
+            </div>
+            </details>
+
+            <details open className="group bg-[#faf2f0] border border-[#e9e1df] rounded-2xl overflow-hidden shadow-sm">
+              <summary className="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-[#faf2f0] transition-colors outline-none focus:bg-[#faf2f0]">
+                <div>
+                  <h4 className="font-serif text-lg font-bold text-[#442a22]">Redes Sociales</h4>
+                  <p className="text-xs text-[#75584d] mt-0.5">Enlaces a canales oficiales y WhatsApp.</p>
+                </div>
+                <ChevronDown className="w-5 h-5 text-[#75584d] group-open:rotate-180 transition-transform duration-300" />
+              </summary>
+              <div className="p-5 border-t border-[#e9e1df] space-y-6 bg-[#faf2f0]">
+
             {/* Social Media Networks Box */}
             <div className="p-5 rounded-2xl bg-[#fff8f6] border border-[#e9e1df] space-y-4">
               <div className="flex items-center justify-between border-b border-[#e9e1df] pb-3">
@@ -2415,6 +2466,19 @@ export const AdminView: React.FC<AdminViewProps> = ({
               </div>
             </div>
 
+            </div>
+            </details>
+
+            <details open className="group bg-[#faf2f0] border border-[#e9e1df] rounded-2xl overflow-hidden shadow-sm">
+              <summary className="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-[#faf2f0] transition-colors outline-none focus:bg-[#faf2f0]">
+                <div>
+                  <h4 className="font-serif text-lg font-bold text-[#442a22]">Ubicación y Sistema</h4>
+                  <p className="text-xs text-[#75584d] mt-0.5">Mapa, horarios y estado de mantenimiento.</p>
+                </div>
+                <ChevronDown className="w-5 h-5 text-[#75584d] group-open:rotate-180 transition-transform duration-300" />
+              </summary>
+              <div className="p-5 border-t border-[#e9e1df] space-y-6 bg-[#faf2f0]">
+
             {/* Google Maps Location & Schedules Box */}
             <div className="p-5 rounded-2xl bg-[#fff8f6] border border-[#e9e1df] space-y-4">
               <div className="flex items-center justify-between border-b border-[#e9e1df] pb-3">
@@ -2496,6 +2560,9 @@ export const AdminView: React.FC<AdminViewProps> = ({
                 )}
               </button>
             </div>
+
+            </div>
+            </details>
 
             <button
               type="submit"
