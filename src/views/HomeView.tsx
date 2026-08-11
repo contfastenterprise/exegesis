@@ -55,7 +55,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const liveTitle = settings?.liveStreamTitle || 'Transmisión en Vivo — Servicio de Adoración Dominical';
   
   // Use video thumbnail if available, otherwise channel cover, otherwise fallback
-  const videoThumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+  const videoThumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null;
   const channelCover = videoThumbnail || settings?.youtubeChannelCoverUrl || 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1200&auto=format&fit=crop&q=80';
   const youtubeChannelUrl = settings?.youtubeUrl || 'https://www.youtube.com';
 
