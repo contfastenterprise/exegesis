@@ -50,7 +50,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
     settings?.youtubeUrl || settings?.liveStreamVideoId || settings?.youtubeChannelCoverUrl
   );
   const isLive = Boolean(settings?.isLiveStreaming);
-  const rawVideoId = settings?.liveStreamVideoId || 'jfKfPfyJRdk';
+  const rawVideoId = settings?.liveStreamVideoId || '';
   const videoId = extractYouTubeVideoId(rawVideoId);
   const liveTitle = settings?.liveStreamTitle || 'Transmisión en Vivo — Servicio de Adoración Dominical';
   
