@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavTab, UserSession, SystemSettings } from '../types';
+import { AnimatePresence, motion } from 'motion/react';
 import { 
   Church, 
   Menu, 
