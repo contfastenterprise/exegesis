@@ -203,7 +203,7 @@ export const Header: React.FC<HeaderProps> = ({
               title="Sermones guardados"
               aria-label="Sermones guardados"
             >
-              <Heart className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
+              <Bookmark className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} />
               {favoriteCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#442a22] text-[#fff8f6] text-[10px] font-bold w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border-2 border-[#fff8f6]">
                   {favoriteCount}
@@ -257,7 +257,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="relative p-2 rounded-full text-[#504441] bg-[#faf2f0] border border-[#e9e1df]"
               aria-label="Sermones guardados"
             >
-              <Heart className="w-4 h-4" strokeWidth={1.5} />
+              <Bookmark className="w-4 h-4" strokeWidth={1.5} />
               {favoriteCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#442a22] text-[#fff8f6] text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {favoriteCount}

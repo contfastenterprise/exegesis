@@ -18,8 +18,18 @@ import { LocationView } from './views/LocationView';
 import { DevotionalsView } from './views/DevotionalsView';
 import { AdminView } from './views/AdminView';
 
-import { Heart, Play, X, BookOpen, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Play, 
+  X, 
+  Menu, 
+  BookOpen, 
+  Heart, 
+  Bookmark,
+  Share2, 
+  ArrowRight,
+  ChevronRight
+} from 'lucide-react';
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<NavTab>('home');
@@ -349,7 +359,7 @@ export function App() {
               <div>
                 <div className="flex items-center justify-between pb-4 border-b border-[#e9e1df] mb-6">
                   <div className="flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-[#D4AF37] fill-current" />
+                    <Bookmark className="w-5 h-5 text-[#D4AF37] fill-current" />
                     <h3 className="font-serif text-2xl font-bold text-[#442a22]">
                       Sermones Guardados
                     </h3>
@@ -367,7 +377,7 @@ export function App() {
                     <BookOpen className="w-8 h-8 mx-auto opacity-50" />
                     <p className="text-sm font-semibold">No tienes sermones guardados todavía.</p>
                     <p className="text-xs">
-                      Haz clic en el ícono del corazón en cualquier sermón para guardarlo aquí.
+                      Haz clic en el ícono del marcador en cualquier sermón para guardarlo aquí.
                     </p>
                   </div>
                 ) : (
