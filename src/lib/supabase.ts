@@ -200,7 +200,10 @@ export const DataService = {
       try {
         const { data, error } = await supabase.from('sermons').select('*').order('date', { ascending: false });
         if (!error && data ) {
-          return data as Sermon[];
+          return data.map((d: any) => ({
+            ...d,
+            likesCount: d.likes_count || 0
+          })) as Sermon[];
         }
       } catch (err) {
         console.warn('Supabase sermons fetch error, using local fallback:', err);
@@ -209,16 +212,22 @@ export const DataService = {
     return getStoredItem<Sermon[]>(STORAGE_KEYS.SERMONS, INITIAL_SERMONS);
   },
 
-  async addSermon(sermon: Omit<Sermon, 'id'>): Promise<Sermon> {
+  async addSermon(sermon: Omit<Sermon, 'id' | 'likesCount'>): Promise<Sermon> {
     const newSermon: Sermon = {
       ...sermon,
-      id: 'sermon-' + Date.now()
+      id: 'sermon-' + Date.now(),
+      likesCount: 0
     };
 
     if (supabase) {
       try {
         const { data, error } = await supabase.from('sermons').insert([newSermon]).select().single();
-        if (!error && data) return data as Sermon;
+        if (!error && data) {
+          return {
+            ...data,
+            likesCount: data.likes_count || 0
+          } as Sermon;
+        }
       } catch (err) {
         console.warn('Supabase add sermon failed:', err);
       }
@@ -230,8 +239,24 @@ export const DataService = {
     return newSermon;
   },
 
+  async toggleSermonLike(sermonId: string, increment: boolean): Promise<void> {
+    if (supabase && !sermonId.startsWith('sermon-')) {
+      try {
+        const { error } = await supabase.rpc('toggle_sermon_like', {
+          p_sermon_id: sermonId,
+          p_increment: increment
+        });
+        if (error) {
+          console.error('Supabase toggle_sermon_like error:', error);
+        }
+      } catch (err) {
+        console.warn('Supabase toggle_sermon_like exception:', err);
+      }
+    }
+  },
+
   async deleteSermon(id: string): Promise<void> {
-    if (supabase) {
+    if (supabase && !id.startsWith('sermon-')) {
       try {
         await supabase.from('sermons').delete().eq('id', id);
       } catch (err) {

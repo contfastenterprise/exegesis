@@ -144,15 +144,18 @@ export const SermonPlayerModal: React.FC<SermonPlayerModalProps> = ({
                 }`}
               >
                 <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current text-[#D4AF37]' : ''}`} />
-                <span>{isFavorite ? 'Guardado en Favoritos' : 'Guardar Sermón'}</span>
+                <span>
+                  {isFavorite ? 'Guardado en Favoritos' : 'Guardar Sermón'}
+                  {sermon.likesCount ? ` (${sermon.likesCount})` : ''}
+                </span>
               </button>
 
               <button
                 onClick={() => onShare(sermon.title)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#faf2f0] text-[#504441] border border-[#e9e1df] hover:bg-[#efe6e4] text-xs font-semibold transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold text-[#504441] bg-[#faf2f0] border border-[#e9e1df] hover:bg-[#efe6e4] transition-colors"
               >
-                <Share2 className="w-4 h-4 text-[#75584d]" />
-                <span>Compartir</span>
+                <Share2 className="w-4 h-4" />
+                <span>Compartir Mensaje</span>
               </button>
             </div>
           </div>

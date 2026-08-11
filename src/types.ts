@@ -37,6 +37,7 @@ export interface Sermon {
   isFeatured?: boolean;
   youtubeUrl?: string;
   youtubeStartMinute?: number;
+  likesCount?: number;
 }
 
 export interface ActivityEvent {

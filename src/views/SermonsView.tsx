@@ -151,10 +151,13 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
 
                 <button
                   onClick={() => onToggleFavorite(featuredSermon)}
-                  className="p-2.5 rounded-full bg-[#5d4037] text-[#fff8f6] hover:bg-[#75584d] transition-colors"
+                  className="p-2.5 rounded-full bg-[#5d4037] text-[#fff8f6] hover:bg-[#75584d] transition-colors flex items-center gap-1.5"
                   aria-label="Guardar sermón"
                 >
                   <Heart className={`w-4 h-4 ${favorites.includes(featuredSermon.id) ? 'fill-current text-[#D4AF37]' : ''}`} />
+                  {featuredSermon.likesCount ? (
+                    <span className="text-xs font-semibold">{featuredSermon.likesCount}</span>
+                  ) : null}
                 </button>
               </div>
             </div>
@@ -213,10 +216,13 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
                           e.stopPropagation();
                           onToggleFavorite(sermon);
                         }}
-                        className="absolute top-3 right-3 p-2 rounded-full bg-black/40 text-[#fff8f6] hover:bg-black/60 backdrop-blur-sm transition-colors"
+                        className="absolute top-3 right-3 px-2.5 py-1.5 rounded-full bg-black/40 text-[#fff8f6] hover:bg-black/60 backdrop-blur-sm transition-colors flex items-center gap-1"
                         aria-label="Guardar a favoritos"
                       >
                         <Heart className={`w-4 h-4 ${isFav ? 'fill-current text-[#D4AF37]' : ''}`} />
+                        {sermon.likesCount ? (
+                          <span className="text-xs font-semibold">{sermon.likesCount}</span>
+                        ) : null}
                       </button>
                     </div>
 

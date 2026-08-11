@@ -685,6 +685,52 @@ export const AdminView: React.FC<AdminViewProps> = ({
               </table>
             </div>
           </div>
+
+          {/* Popular Sermons Statistics Table */}
+          <div className="rounded-3xl bg-[#faf2f0] border border-[#e9e1df] p-6 space-y-4">
+            <h3 className="font-serif text-xl font-bold text-[#442a22] flex items-center gap-2">
+              <Heart className="w-5 h-5 text-[#D4AF37] fill-current" />
+              Sermones Más Populares
+            </h3>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-[#1e1b1a] min-w-[500px] whitespace-nowrap">
+                <thead className="bg-[#efe6e4] text-[#75584d] font-bold uppercase tracking-wider">
+                  <tr>
+                    <th className="p-3 rounded-l-xl w-16">Rank</th>
+                    <th className="p-3">Título</th>
+                    <th className="p-3">Pastor</th>
+                    <th className="p-3">Fecha</th>
+                    <th className="p-3 rounded-r-xl text-right">Me Gusta</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#e9e1df]">
+                  {[...sermons]
+                    .sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0))
+                    .slice(0, 10)
+                    .map((sermon, index) => (
+                    <tr key={sermon.id} className="hover:bg-[#fff8f6]/60">
+                      <td className="p-3 font-bold text-[#D4AF37]">#{index + 1}</td>
+                      <td className="p-3 font-semibold text-[#442a22]">{sermon.title}</td>
+                      <td className="p-3 text-[#75584d]">{sermon.pastor}</td>
+                      <td className="p-3 text-[#75584d]">{sermon.date}</td>
+                      <td className="p-3 text-right font-bold text-[#442a22] flex items-center justify-end gap-1.5">
+                        {sermon.likesCount || 0}
+                        <Heart className="w-3.5 h-3.5 text-[#D4AF37] fill-current" />
+                      </td>
+                    </tr>
+                  ))}
+                  {sermons.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="p-6 text-center text-[#75584d]">
+                        No hay sermones publicados.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 

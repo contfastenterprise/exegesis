@@ -116,10 +116,13 @@ export function App() {
     loadAllData();
   }, []);
 
-  // Save favorites to localStorage
-  const toggleFavorite = (sermon: Sermon) => {
+  // Save favorites to localStorage and update DB
+  const toggleFavorite = async (sermon: Sermon) => {
+    let isAdding = false;
+    
     setFavoriteIds((prev) => {
       const isFav = prev.includes(sermon.id);
+      isAdding = !isFav;
       const updated = isFav ? prev.filter((id) => id !== sermon.id) : [...prev, sermon.id];
       try {
         localStorage.setItem('gt_favorites_v1', JSON.stringify(updated));
@@ -127,7 +130,7 @@ export function App() {
         console.warn('Error saving favorites', e);
       }
 
-      if (!isFav) {
+      if (isAdding) {
         addToast('Sermón guardado', `"${sermon.title}" se agregó a tus sermones guardados.`, 'info');
       } else {
         addToast('Sermón eliminado de guardados', `"${sermon.title}" fue removido.`, 'info');
@@ -135,6 +138,23 @@ export function App() {
 
       return updated;
     });
+
+    // Update local state optimistic UI for likes count
+    setSermons((prev) => prev.map(s => {
+      if (s.id === sermon.id) {
+        const currentLikes = s.likesCount || 0;
+        return {
+          ...s,
+          likesCount: isAdding ? currentLikes + 1 : Math.max(0, currentLikes - 1)
+        };
+      }
+      return s;
+    }));
+
+    // If using Supabase, hit the API
+    if (sermon.id.startsWith('sermon-') === false) {
+      await DataService.toggleSermonLike(sermon.id, isAdding);
+    }
   };
 
   const handleShare = (title: string) => {
