@@ -565,14 +565,14 @@ export const AdminView: React.FC<AdminViewProps> = ({
       {/* Admin Sub-navigation */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-[#e9e1df]">
         {[
-          { id: 'dashboard', label: 'Resumen & Estadísticas', icon: Sparkles },
-          { id: 'prayers', label: `Peticiones (${prayerRequests.length})`, icon: Heart },
-          { id: 'sermons', label: 'Gestión de Sermones', icon: BookOpen },
-          { id: 'devotionals', label: 'Gestión de Devocionales', icon: Sun },
-          { id: 'events', label: 'Gestión de Eventos', icon: Calendar },
-          { id: 'leaders', label: `Pastores & Líderes (${leaders.length})`, icon: Users },
-          { id: 'admins', label: `Administradores (${adminUsers.length})`, icon: ShieldCheck },
-          { id: 'settings', label: 'Configuración General', icon: Settings }
+          { id: 'dashboard', label: 'Resumen', icon: Sparkles },
+          { id: 'prayers', label: 'Peticiones', icon: Heart },
+          { id: 'sermons', label: 'Sermones', icon: BookOpen },
+          { id: 'devotionals', label: 'Devocionales', icon: Sun },
+          { id: 'events', label: 'Eventos', icon: Calendar },
+          { id: 'leaders', label: 'Líderes', icon: Users },
+          { id: 'admins', label: 'Admins', icon: ShieldCheck },
+          { id: 'settings', label: 'Ajustes', icon: Settings }
         ].map((item) => {
           const Icon = item.icon;
           const isActive = activeAdminTab === item.id;
