@@ -53,7 +53,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const rawVideoId = settings?.liveStreamVideoId || 'jfKfPfyJRdk';
   const videoId = extractYouTubeVideoId(rawVideoId);
   const liveTitle = settings?.liveStreamTitle || 'Transmisión en Vivo — Servicio de Adoración Dominical';
-  const channelCover = settings?.youtubeChannelCoverUrl || 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1200&auto=format&fit=crop&q=80';
+  
+  // Use video thumbnail if available, otherwise channel cover, otherwise fallback
+  const videoThumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+  const channelCover = videoThumbnail || settings?.youtubeChannelCoverUrl || 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1200&auto=format&fit=crop&q=80';
   const youtubeChannelUrl = settings?.youtubeUrl || 'https://www.youtube.com';
 
   const hasSocials = Boolean(
@@ -298,8 +301,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1e1b1a] via-[#1e1b1a]/60 to-transparent" />
                 <div className="absolute top-4 right-4 bg-red-600/90 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 backdrop-blur-md border border-white/20">
                   <Youtube className="w-4 h-4 fill-current" />
-                  <span>Canal Oficial de YouTube</span>
+                  <span>Último Video</span>
                 </div>
+                {videoId && (
+                  <button 
+                    onClick={() => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank')}
+                    className="absolute inset-0 flex items-center justify-center group-hover:bg-black/20 transition-colors"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-red-600/90 text-white flex items-center justify-center backdrop-blur-sm shadow-xl hover:scale-110 transition-transform">
+                      <Play className="w-8 h-8 ml-1 fill-current" />
+                    </div>
+                  </button>
+                )}
               </div>
 
               {/* Channel Info Overlay */}
