@@ -561,10 +561,14 @@ export const AuthService = {
         const { data: { session } } = await supabase.auth.getSession();
         if (session && session.user) {
           let isAdmin = false;
+          let adminName = session.user.user_metadata?.name || 'Administrador';
           if (session.user.email) {
             try {
-              const { data } = await supabase.from('admin_users').select('id').eq('email', session.user.email).single();
-              if (data) isAdmin = true;
+              const { data } = await supabase.from('admin_users').select('id, name').eq('email', session.user.email).single();
+              if (data) {
+                isAdmin = true;
+                if (data.name) adminName = data.name;
+              }
             } catch (e) {
               // Ignore or log
             }
@@ -579,7 +583,7 @@ export const AuthService = {
               id: session.user.id,
               email: session.user.email || 'admin@gracetruth.org',
               role: isAdmin ? 'admin' : 'user',
-              name: session.user.user_metadata?.name || 'Administrador'
+              name: adminName
             },
             isAdmin
           };
@@ -602,10 +606,14 @@ export const AuthService = {
 
         if (!error && data.session && data.user) {
           let isAdmin = false;
+          let adminName = data.user.user_metadata?.name || 'Administrador Church';
           if (data.user.email) {
             try {
-              const { data: adminData } = await supabase.from('admin_users').select('id').eq('email', data.user.email).single();
-              if (adminData) isAdmin = true;
+              const { data: adminData } = await supabase.from('admin_users').select('id, name').eq('email', data.user.email).single();
+              if (adminData) {
+                isAdmin = true;
+                if (adminData.name) adminName = adminData.name;
+              }
             } catch(e) {}
           }
           
@@ -623,7 +631,7 @@ export const AuthService = {
               id: data.user.id,
               email: data.user.email || email,
               role: 'admin',
-              name: 'Administrador Church'
+              name: adminName
             },
             isAdmin: true
           };
