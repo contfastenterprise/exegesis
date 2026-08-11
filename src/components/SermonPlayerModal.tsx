@@ -93,45 +93,45 @@ export const SermonPlayerModal: React.FC<SermonPlayerModalProps> = ({
               </p>
             </div>
 
-            {/* Interactive Audio Player Simulation */}
-            <div className="p-4 rounded-2xl bg-[#faf2f0] border border-[#e9e1df] space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="w-12 h-12 rounded-full bg-[#442a22] text-[#fff8f6] flex items-center justify-center shadow-md hover:bg-[#5d4037] transition-all"
-                  >
-                    {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
-                  </button>
-                  <div>
-                    <p className="text-xs font-semibold text-[#1e1b1a]">Reproducir Audio</p>
-                    <p className="text-[11px] text-[#75584d]">
-                      {isPlaying ? 'Reproduciendo audio...' : 'Presiona para escuchar'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-[#75584d]" />
-                  <span className="text-xs font-medium text-[#75584d]">24:15</span>
-                </div>
+            {/* Media Player */}
+            {sermon.youtubeUrl ? (
+              <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border border-[#e9e1df]">
+                {(() => {
+                  const videoId = sermon.youtubeUrl?.match(/(?:v=|youtu\.be\/|embed\/)([^&?]+)/)?.[1] || '';
+                  return videoId ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${videoId}?rel=0${sermon.youtubeStartMinute ? `&start=${sermon.youtubeStartMinute * 60}` : ''}`}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-white/50 text-sm">
+                      URL de video inválido
+                    </div>
+                  );
+                })()}
               </div>
-
-              {/* Progress Bar */}
-              <div className="w-full bg-[#e9e1df] rounded-full h-2 cursor-pointer relative" onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const pct = Math.round((clickX / rect.width) * 100);
-                setProgress(pct);
-              }}>
-                <div
-                  className="bg-[#442a22] h-2 rounded-full transition-all duration-300 relative"
-                  style={{ width: `${progress}%` }}
+            ) : sermon.audioUrl ? (
+              <div className="p-4 rounded-2xl bg-[#faf2f0] border border-[#e9e1df] shadow-sm">
+                <h5 className="text-xs font-semibold text-[#442a22] mb-2 flex items-center gap-2">
+                  <Volume2 className="w-4 h-4 text-[#D4AF37]" />
+                  <span>Audio del Sermón</span>
+                </h5>
+                <audio 
+                  controls 
+                  className="w-full h-10 outline-none" 
+                  src={sermon.audioUrl}
+                  controlsList="nodownload"
                 >
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-[#D4AF37] rounded-full shadow" />
-                </div>
+                  Tu navegador no soporta el elemento de audio.
+                </audio>
               </div>
-            </div>
+            ) : (
+              <div className="p-4 rounded-2xl bg-[#faf2f0] border border-[#e9e1df] text-center text-sm text-[#75584d]">
+                No hay contenido multimedia disponible para este sermón.
+              </div>
+            )}
 
             {/* Action buttons */}
             <div className="flex items-center justify-between pt-2">
