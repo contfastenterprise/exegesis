@@ -30,7 +30,7 @@ export const SermonPlayerModal: React.FC<SermonPlayerModalProps> = ({
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-2xl bg-[#fff8f6] rounded-3xl shadow-2xl border border-[#e9e1df] overflow-hidden"
+          className="relative w-full max-w-2xl max-h-[90vh] bg-[#fff8f6] rounded-3xl shadow-2xl border border-[#e9e1df] overflow-y-auto"
         >
           {/* Close button */}
           <button
