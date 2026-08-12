@@ -23,6 +23,16 @@ export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
+// Secondary client used exclusively to create new users without overwriting the current admin's session
+const tempAdminClient = isSupabaseConfigured
+  ? createClient(supabaseUrl, supabaseAnonKey, { 
+      auth: { 
+        persistSession: false,
+        storageKey: 'temp-admin-auth-key'
+      } 
+    })
+  : null;
+
 // Local storage key constants for persistence fallback
 const STORAGE_KEYS = {
   SERMONS: 'gt_sermons_v1',
@@ -588,13 +598,9 @@ export const DataService = {
   async addAdminUser(email: string, name: string, password?: string): Promise<AdminUser | null> {
     if (supabase) {
       // Create user in Supabase Auth if password is provided
-      if (password) {
+      if (password && tempAdminClient) {
         try {
-          // Use a secondary client to prevent overwriting the current admin's session
-          const tempClient = createClient(supabaseUrl, supabaseAnonKey, { 
-            auth: { persistSession: false } 
-          });
-          const { error: signUpError } = await tempClient.auth.signUp({
+          const { error: signUpError } = await tempAdminClient.auth.signUp({
             email,
             password,
             options: { data: { name } }
