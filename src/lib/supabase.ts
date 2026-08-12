@@ -606,10 +606,12 @@ export const DataService = {
             options: { data: { name } }
           });
           if (signUpError) {
-            if (signUpError.message.toLowerCase().includes('already registered')) {
+            const errMsg = signUpError.message?.toLowerCase() || '';
+            const status = (signUpError as any).status;
+            if (errMsg.includes('already registered')) {
               console.log('Usuario ya registrado en Auth, procediendo a agregarlo como admin_users');
-            } else if (signUpError.message.toLowerCase().includes('rate limit')) {
-              alert('Límite de seguridad alcanzado (Rate Limit): Has intentado registrar este correo demasiadas veces. Por favor, espera 1 hora e intenta de nuevo.');
+            } else if (errMsg.includes('rate limit') || errMsg.includes('too many requests') || status === 429) {
+              alert('Límite de seguridad de Supabase alcanzado (Demasiadas peticiones desde tu red). Has hecho muchos intentos de registro seguidos. Por favor, espera 1 hora e intenta de nuevo, o desactiva los límites en tu panel de Supabase.');
               return null;
             } else {
               console.warn('Supabase auth sign up error:', signUpError);
