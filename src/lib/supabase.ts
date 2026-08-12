@@ -621,6 +621,9 @@ export const DataService = {
       };
       try {
         const { data, error } = await supabase.from('admin_users').insert([newUser]).select().single();
+        if (error) {
+          console.error('Supabase admin_users insert error:', error);
+        }
         if (!error && data) return data as AdminUser;
       } catch (err) {
         console.warn('Supabase add admin error:', err);
