@@ -602,6 +602,9 @@ export const DataService = {
           if (signUpError) {
             if (signUpError.message.toLowerCase().includes('already registered')) {
               console.log('Usuario ya registrado en Auth, procediendo a agregarlo como admin_users');
+            } else if (signUpError.message.toLowerCase().includes('rate limit')) {
+              alert('Límite de seguridad alcanzado (Rate Limit): Has intentado registrar este correo demasiadas veces. Por favor, espera 1 hora e intenta de nuevo.');
+              return null;
             } else {
               console.warn('Supabase auth sign up error:', signUpError);
               return null;
