@@ -484,7 +484,19 @@ export const DataService = {
   async saveSettings(settings: SystemSettings): Promise<SystemSettings> {
     if (supabase) {
       try {
-        const { error } = await supabase.from('system_settings').upsert([settings]);
+        const { data: existingData } = await supabase.from('system_settings').select('id').eq('id', 'settings').single();
+        
+        const payload = { ...settings, id: 'settings' };
+        let error = null;
+
+        if (existingData) {
+          const { error: updateErr } = await supabase.from('system_settings').update(payload).eq('id', 'settings');
+          error = updateErr;
+        } else {
+          const { error: insertErr } = await supabase.from('system_settings').insert([payload]);
+          error = insertErr;
+        }
+
         if (error) {
           console.error('Supabase settings update error from server:', error);
           alert('Error al guardar en la base de datos: ' + error.message);
