@@ -114,6 +114,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [newAdminName, setNewAdminName] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
+  const [isSavingAdmin, setIsSavingAdmin] = useState(false);
 
   React.useEffect(() => {
     setIsLoadingAdmins(true);
@@ -132,6 +133,8 @@ export const AdminView: React.FC<AdminViewProps> = ({
       return;
     }
 
+    setIsSavingAdmin(true);
+
     const added = await DataService.addAdminUser(newAdminEmail, newAdminName, newAdminPassword);
     if (added) {
       setAdminUsers([added, ...adminUsers]);
@@ -142,6 +145,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
     } else {
       alert('Error al agregar administrador. Verifica que el correo no esté duplicado.');
     }
+    setIsSavingAdmin(false);
   };
 
   const handleDeleteAdmin = async (id: string, email: string) => {
@@ -1047,10 +1051,15 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full mt-4 py-2.5 rounded-xl bg-[#442a22] text-[#fff8f6] text-sm font-semibold hover:bg-[#5d4037] transition-colors flex items-center justify-center gap-2"
+                  disabled={isSavingAdmin}
+                  className="w-full mt-4 py-2.5 rounded-xl bg-[#442a22] text-[#fff8f6] text-sm font-semibold hover:bg-[#5d4037] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Plus className="w-4 h-4" />
-                  <span>Otorgar Acceso</span>
+                  {isSavingAdmin ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4" />
+                  )}
+                  <span>{isSavingAdmin ? 'Guardando...' : 'Otorgar Acceso'}</span>
                 </button>
               </form>
             </div>
