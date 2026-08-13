@@ -864,6 +864,10 @@ export const AuthService = {
             },
             isAdmin
           };
+        } else {
+          // If Supabase is active but no real session exists, clear any local mocked session
+          setStoredItem(STORAGE_KEYS.AUTH, { user: null, isAdmin: false });
+          return { user: null, isAdmin: false };
         }
       } catch (err) {
         console.warn('Supabase auth session check failed:', err);
