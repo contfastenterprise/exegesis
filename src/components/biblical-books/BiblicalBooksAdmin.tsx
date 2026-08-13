@@ -219,7 +219,7 @@ export const BiblicalBooksAdmin: React.FC<BiblicalBooksAdminProps> = ({ onSucces
                 <div>
                   <label className="block text-[11px] font-bold uppercase text-[#1e1b1a] mb-1">Público (Audience)</label>
                   <select value={audience} onChange={e => setAudience(e.target.value)} className="w-full px-3 py-2 bg-[#fff8f6] border border-[#e9e1df] rounded-xl text-xs text-[#1e1b1a] focus:ring-2 focus:ring-[#442a22]">
-                    <option value="Todos">Ninguno</option>
+                    <option value="Todos">Todos</option>
                     <option value="Niños">Niños</option>
                     <option value="Adolescentes">Adolescentes</option>
                     <option value="Jóvenes">Jóvenes</option>
