@@ -18,6 +18,8 @@ import { LocationView } from './views/LocationView';
 import { DevotionalsView } from './views/DevotionalsView';
 import { AdminView } from './views/AdminView';
 import { BiblicalBooksView } from './views/BiblicalBooksView';
+import { RequireAuth } from './components/auth/RequireAuth';
+import { NotFoundPage } from './components/errors/NotFoundPage';
 
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -33,8 +35,16 @@ import {
 } from 'lucide-react';
 
 export function App() {
-  const [currentTab, setCurrentTab] = useState<NavTab>('home');
+  const [_currentTab, _setCurrentTab] = useState<NavTab | string>('home');
   const [session, setSession] = useState<UserSession>({ user: null, isAdmin: false });
+  const [previousTab, setPreviousTab] = useState<NavTab | string>('home');
+  const [redirectTab, setRedirectTab] = useState<NavTab | string | null>(null);
+
+  const currentTab = _currentTab;
+  const setCurrentTab = (newTab: NavTab | string) => {
+    setPreviousTab(_currentTab);
+    _setCurrentTab(newTab);
+  };
   
   // Data state
   const [sermons, setSermons] = useState<Sermon[]>([]);
@@ -327,24 +337,42 @@ export function App() {
         )}
 
         {currentTab === 'admin' && (
-          <AdminView
+          <RequireAuth
             session={session}
-            onOpenAuth={() => setIsAuthModalOpen(true)}
-            onLogout={handleLogout}
-            prayerRequests={prayerRequests}
-            onPrayerRequestsUpdated={setPrayerRequests}
-            sermons={sermons}
-            onSermonsUpdated={setSermons}
-            events={events}
-            onEventsUpdated={setEvents}
-            registrations={registrations}
-            leaders={leaders}
-            onLeadersUpdated={setLeaders}
-            devotionals={devotionals}
-            onDevotionalsUpdated={setDevotionals}
-            settings={settings}
-            onSettingsUpdated={setSettings}
-            onSuccessToast={(msg) => addToast('Éxito', msg, 'success')}
+            requireAdmin={true}
+            onLoginNeeded={() => {
+              setRedirectTab('admin');
+              setIsAuthModalOpen(true);
+            }}
+            onGoHome={() => setCurrentTab('home')}
+            onGoBack={() => setCurrentTab(previousTab)}
+          >
+            <AdminView
+              session={session}
+              onOpenAuth={() => setIsAuthModalOpen(true)}
+              onLogout={handleLogout}
+              prayerRequests={prayerRequests}
+              onPrayerRequestsUpdated={setPrayerRequests}
+              sermons={sermons}
+              onSermonsUpdated={setSermons}
+              events={events}
+              onEventsUpdated={setEvents}
+              registrations={registrations}
+              leaders={leaders}
+              onLeadersUpdated={setLeaders}
+              devotionals={devotionals}
+              onDevotionalsUpdated={setDevotionals}
+              settings={settings}
+              onSettingsUpdated={setSettings}
+              onSuccessToast={(msg) => addToast('Éxito', msg, 'success')}
+            />
+          </RequireAuth>
+        )}
+        {/* Fallback para 404 (Tab Inexistente) */}
+        {!['home', 'sermons', 'events', 'help', 'interactions', 'leaders', 'location', 'devotionals', 'biblical-books', 'admin'].includes(currentTab) && (
+          <NotFoundPage
+            onGoHome={() => setCurrentTab('home')}
+            onGoBack={() => setCurrentTab(previousTab)}
           />
         )}
       </main>
@@ -359,11 +387,18 @@ export function App() {
       {/* Modals & Popups */}
       <AuthModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={() => {
+          setIsAuthModalOpen(false);
+          // If we closed the modal without logging in and we were trying to access admin
+          if (!session.user && currentTab === 'admin') {
+            setCurrentTab(previousTab === 'admin' ? 'home' : previousTab);
+          }
+        }}
         onSuccess={(newSession) => {
           setSession(newSession);
           addToast('Bienvenido', 'Has iniciado sesión como Administrador de Grace & Truth.', 'success');
-          setCurrentTab('admin');
+          setCurrentTab(redirectTab || 'admin');
+          setRedirectTab(null);
         }}
       />
 
