@@ -587,8 +587,16 @@ export const DataService = {
   async getAdminUsers(): Promise<AdminUser[]> {
     if (supabase) {
       try {
-        const { data, error } = await supabase.from('admin_users').select('*').order('createdAt', { ascending: false });
-        if (!error && data) return data as AdminUser[];
+        const { data, error } = await supabase.from('admin_users').select('*');
+        if (error) {
+          console.error('Supabase fetch admin_users error:', error);
+        }
+        if (!error && data) {
+          // Sort in JavaScript to avoid PostgREST camelCase quoting issues
+          return (data as AdminUser[]).sort((a, b) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          });
+        }
       } catch (err) {
         console.warn('Supabase admin users fetch error:', err);
       }
