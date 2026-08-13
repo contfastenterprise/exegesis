@@ -57,6 +57,7 @@ export const Header: React.FC<HeaderProps> = ({
   const navItems: { id: NavTab; label: string; icon: React.ElementType; isProtected?: boolean }[] = [
     { id: 'home', label: 'Inicio', icon: Home },
     { id: 'sermons', label: 'Sermones', icon: BookOpen },
+    { id: 'biblical-books', label: 'Biblioteca', icon: BookOpen },
     { id: 'devotionals', label: 'Devocionales', icon: Sun },
     { id: 'activities', label: 'Actividades', icon: Calendar },
     { id: 'leaders', label: 'Líderes', icon: Users },

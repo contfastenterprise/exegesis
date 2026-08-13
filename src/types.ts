@@ -1,4 +1,4 @@
-export type NavTab = 'home' | 'sermons' | 'activities' | 'leaders' | 'location' | 'help' | 'interactions' | 'devotionals' | 'admin';
+export type NavTab = 'home' | 'sermons' | 'activities' | 'leaders' | 'location' | 'help' | 'interactions' | 'devotionals' | 'admin' | 'biblical-books';
 
 export interface Devotional {
   id: string;
@@ -138,4 +138,38 @@ export interface UserSession {
     name?: string;
   } | null;
   isAdmin: boolean;
+}
+
+export interface BiblicalBook {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  coverUrl?: string;
+  fileUrl?: string;
+  author?: string;
+  publisher?: string;
+  category?: string;
+  audience?: string;
+  ageRange?: string;
+  quarter?: number;
+  year?: number;
+  lessonCount?: number;
+  fileType?: string;
+  fileSize?: number;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateBiblicalBookInput extends Omit<BiblicalBook, 'id' | 'slug' | 'createdAt' | 'updatedAt'> {}
+export interface UpdateBiblicalBookInput extends Partial<CreateBiblicalBookInput> {}
+
+export interface BiblicalBookFilters {
+  search?: string;
+  category?: string;
+  audience?: string;
+  year?: number;
+  quarter?: number;
 }

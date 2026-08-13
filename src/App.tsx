@@ -17,6 +17,7 @@ import { LeadersView } from './views/LeadersView';
 import { LocationView } from './views/LocationView';
 import { DevotionalsView } from './views/DevotionalsView';
 import { AdminView } from './views/AdminView';
+import { BiblicalBooksView } from './views/BiblicalBooksView';
 
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -270,6 +271,13 @@ export function App() {
         {currentTab === 'location' && (
           <LocationView
             settings={settings}
+          />
+        )}
+
+        {currentTab === 'biblical-books' && (
+          <BiblicalBooksView
+            onSuccessToast={(msg) => addToast('Éxito', msg, 'success')}
+            onErrorToast={(msg) => addToast('Error', msg, 'error')}
           />
         )}
 

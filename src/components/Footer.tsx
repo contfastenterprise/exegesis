@@ -166,6 +166,11 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, onOpenAuth, setting
                 </button>
               </li>
               <li>
+                <button onClick={() => onSelectTab('biblical-books')} className="hover:text-[#D4AF37] transition-colors">
+                  Biblioteca de Escuela Bíblica
+                </button>
+              </li>
+              <li>
                 <button onClick={() => onSelectTab('devotionals')} className="hover:text-[#D4AF37] transition-colors">
                   Devocionales Diarios
                 </button>

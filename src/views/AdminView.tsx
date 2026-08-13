@@ -54,6 +54,8 @@ import {
 } from 'lucide-react';
 import { DataService, isSupabaseConfigured } from '../lib/supabase';
 import { extractYouTubeVideoId, getYouTubeThumbnailUrl } from '../lib/youtube';
+import { BiblicalBooksAdmin } from '../components/biblical-books/BiblicalBooksAdmin';
+
 interface AdminViewProps {
   session: UserSession;
   onOpenAuth: () => void;
@@ -93,7 +95,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   onSettingsUpdated,
   onSuccessToast
 }) => {
-  const [activeAdminTab, setActiveAdminTab] = useState<'dashboard' | 'prayers' | 'sermons' | 'devotionals' | 'events' | 'leaders' | 'settings' | 'admins'>('dashboard');
+  const [activeAdminTab, setActiveAdminTab] = useState<'dashboard' | 'prayers' | 'sermons' | 'devotionals' | 'events' | 'leaders' | 'biblical-books' | 'settings' | 'admins'>('dashboard');
 
   // Form states for adding devotional
   const [devotionalTitle, setDevotionalTitle] = useState('');
@@ -569,6 +571,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
           { id: 'dashboard', label: 'Resumen', icon: Sparkles },
           { id: 'prayers', label: 'Peticiones', icon: Heart },
           { id: 'sermons', label: 'Sermones', icon: BookOpen },
+          { id: 'biblical-books', label: 'Biblioteca', icon: BookOpen },
           { id: 'devotionals', label: 'Devocionales', icon: Sun },
           { id: 'events', label: 'Eventos', icon: Calendar },
           { id: 'leaders', label: 'Líderes', icon: Users },
@@ -979,6 +982,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
       )}
 
       {/* Tab Content: Admins */}
+      {activeAdminTab === 'biblical-books' && (
+        <BiblicalBooksAdmin onSuccessToast={onSuccessToast} />
+      )}
+
       {activeAdminTab === 'admins' && (
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">

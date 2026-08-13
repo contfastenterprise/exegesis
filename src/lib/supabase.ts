@@ -8,7 +8,7 @@ import {
   INITIAL_SYSTEM_SETTINGS,
   INITIAL_LEADERS 
 } from '../data/initialData';
-import { Sermon, ActivityEvent, PrayerRequest, EventRegistration, CommunityPost, SystemSettings, UserSession, ChurchLeader, AdminUser, Devotional } from '../types';
+import { Sermon, ActivityEvent, PrayerRequest, EventRegistration, CommunityPost, SystemSettings, UserSession, ChurchLeader, AdminUser, Devotional, BiblicalBook, CreateBiblicalBookInput, UpdateBiblicalBookInput } from '../types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -43,7 +43,8 @@ const STORAGE_KEYS = {
   SETTINGS: 'gt_settings_v1',
   LEADERS: 'gt_leaders_v1',
   AUTH: 'gt_auth_v1',
-  DEVOTIONALS: 'gt_devotionals_v1'
+  DEVOTIONALS: 'gt_devotionals_v1',
+  BIBLICAL_BOOKS: 'gt_biblical_books_v1'
 };
 
 // Helper to get or initialize local storage
@@ -650,6 +651,173 @@ export const DataService = {
       } catch (err) {
         console.warn('Supabase delete admin error:', err);
       }
+    }
+  },
+
+  // Biblical Books
+  async getBiblicalBooks(includeInactive: boolean = false): Promise<BiblicalBook[]> {
+    if (supabase) {
+      try {
+        let query = supabase.from('biblical_books').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+        if (!includeInactive) {
+          query = query.eq('is_active', true);
+        }
+        const { data, error } = await query;
+        if (!error && data) {
+          return data.map((d: any) => ({
+            id: d.id,
+            title: d.title,
+            slug: d.slug,
+            description: d.description,
+            coverUrl: d.cover_url,
+            fileUrl: d.file_url,
+            author: d.author,
+            publisher: d.publisher,
+            category: d.category,
+            audience: d.audience,
+            ageRange: d.age_range,
+            quarter: d.quarter,
+            year: d.year,
+            lessonCount: d.lesson_count,
+            fileType: d.file_type,
+            fileSize: d.file_size,
+            isActive: d.is_active,
+            sortOrder: d.sort_order,
+            createdAt: d.created_at,
+            updatedAt: d.updated_at
+          })) as BiblicalBook[];
+        }
+      } catch (err) {
+        console.warn('Supabase biblical books fetch error:', err);
+      }
+    }
+    return getStoredItem<BiblicalBook[]>(STORAGE_KEYS.BIBLICAL_BOOKS, []);
+  },
+
+  async addBiblicalBook(book: CreateBiblicalBookInput): Promise<BiblicalBook | null> {
+    const slug = book.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now();
+    
+    if (supabase) {
+      try {
+        const dbPayload = {
+          title: book.title,
+          slug,
+          description: book.description,
+          cover_url: book.coverUrl,
+          file_url: book.fileUrl,
+          author: book.author,
+          publisher: book.publisher,
+          category: book.category,
+          audience: book.audience,
+          age_range: book.ageRange,
+          quarter: book.quarter,
+          year: book.year,
+          lesson_count: book.lessonCount,
+          file_type: book.fileType,
+          file_size: book.fileSize,
+          is_active: book.isActive,
+          sort_order: book.sortOrder
+        };
+
+        const { data, error } = await supabase.from('biblical_books').insert([dbPayload]).select().single();
+        if (!error && data) {
+          return {
+            ...book,
+            id: data.id,
+            slug: data.slug,
+            createdAt: data.created_at,
+            updatedAt: data.updated_at
+          } as BiblicalBook;
+        } else {
+          console.error('Supabase add biblical book error:', error);
+        }
+      } catch (err) {
+        console.warn('Supabase add biblical book exception:', err);
+      }
+    }
+    
+    // Fallback
+    const localId = 'book-' + Date.now();
+    const newBook: BiblicalBook = {
+      ...book,
+      id: localId,
+      slug,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const books = getStoredItem<BiblicalBook[]>(STORAGE_KEYS.BIBLICAL_BOOKS, []);
+    setStoredItem(STORAGE_KEYS.BIBLICAL_BOOKS, [newBook, ...books]);
+    return newBook;
+  },
+
+  async updateBiblicalBook(id: string, updates: UpdateBiblicalBookInput): Promise<BiblicalBook | null> {
+    if (supabase && !id.startsWith('book-')) {
+      try {
+        const dbPayload: any = {};
+        if (updates.title !== undefined) dbPayload.title = updates.title;
+        if (updates.description !== undefined) dbPayload.description = updates.description;
+        if (updates.coverUrl !== undefined) dbPayload.cover_url = updates.coverUrl;
+        if (updates.fileUrl !== undefined) dbPayload.file_url = updates.fileUrl;
+        if (updates.author !== undefined) dbPayload.author = updates.author;
+        if (updates.publisher !== undefined) dbPayload.publisher = updates.publisher;
+        if (updates.category !== undefined) dbPayload.category = updates.category;
+        if (updates.audience !== undefined) dbPayload.audience = updates.audience;
+        if (updates.ageRange !== undefined) dbPayload.age_range = updates.ageRange;
+        if (updates.quarter !== undefined) dbPayload.quarter = updates.quarter;
+        if (updates.year !== undefined) dbPayload.year = updates.year;
+        if (updates.lessonCount !== undefined) dbPayload.lesson_count = updates.lessonCount;
+        if (updates.fileType !== undefined) dbPayload.file_type = updates.fileType;
+        if (updates.fileSize !== undefined) dbPayload.file_size = updates.fileSize;
+        if (updates.isActive !== undefined) dbPayload.is_active = updates.isActive;
+        if (updates.sortOrder !== undefined) dbPayload.sort_order = updates.sortOrder;
+
+        const { error } = await supabase.from('biblical_books').update(dbPayload).eq('id', id);
+        if (error) {
+           console.error('Supabase update biblical book error:', error);
+           return null;
+        }
+      } catch (err) {
+        console.warn('Supabase update biblical book exception:', err);
+        return null;
+      }
+    }
+    
+    const books = getStoredItem<BiblicalBook[]>(STORAGE_KEYS.BIBLICAL_BOOKS, []);
+    const updatedBooks = books.map(b => b.id === id ? { ...b, ...updates, updatedAt: new Date().toISOString() } : b);
+    setStoredItem(STORAGE_KEYS.BIBLICAL_BOOKS, updatedBooks);
+    return updatedBooks.find(b => b.id === id) || null;
+  },
+
+  async deleteBiblicalBook(id: string): Promise<void> {
+    if (supabase && !id.startsWith('book-')) {
+      try {
+        await supabase.from('biblical_books').delete().eq('id', id);
+      } catch (err) {
+        console.warn('Supabase delete biblical book error:', err);
+      }
+    }
+    const books = getStoredItem<BiblicalBook[]>(STORAGE_KEYS.BIBLICAL_BOOKS, []);
+    setStoredItem(STORAGE_KEYS.BIBLICAL_BOOKS, books.filter(b => b.id !== id));
+  },
+
+  async uploadBiblicalBookMedia(file: File, folder: 'covers' | 'documents'): Promise<{url: string, path: string} | null> {
+    if (!supabase) return null;
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+      const filePath = `${folder}/${fileName}`;
+      const { error: uploadError } = await supabase.storage.from('biblical-books').upload(filePath, file);
+      
+      if (uploadError) {
+        console.error(`Error uploading to biblical-books/${folder}:`, uploadError);
+        return null;
+      }
+      
+      const { data } = supabase.storage.from('biblical-books').getPublicUrl(filePath);
+      return { url: data.publicUrl, path: filePath };
+    } catch (error) {
+      console.error('Exception uploading biblical book media:', error);
+      return null;
     }
   }
 };
