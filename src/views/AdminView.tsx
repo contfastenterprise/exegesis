@@ -135,17 +135,17 @@ export const AdminView: React.FC<AdminViewProps> = ({
     }
 
     setIsSavingAdmin(true);
-
-    const added = await DataService.addAdminUser(newAdminEmail, newAdminName, newAdminPassword);
-    if (added) {
-      setAdminUsers([added, ...adminUsers]);
+    const result = await DataService.addAdminUser(newAdminEmail, newAdminName, newAdminPassword);
+    if (result.success && result.data) {
+      setAdminUsers([result.data, ...adminUsers]);
       setNewAdminEmail('');
       setNewAdminName('');
       setNewAdminPassword('');
       onSuccessToast('Administrador agregado con éxito. Ya puede iniciar sesión.');
     } else {
-      alert('Error al agregar administrador. Verifica que el correo no esté duplicado.');
+      alert(result.error || 'Error al agregar administrador.');
     }
+    
     setIsSavingAdmin(false);
   };
 

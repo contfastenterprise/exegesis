@@ -604,7 +604,7 @@ export const DataService = {
     return [];
   },
 
-  async addAdminUser(email: string, name: string, password?: string): Promise<AdminUser | null> {
+  async addAdminUser(email: string, name: string, password?: string): Promise<{ success: boolean; data?: AdminUser; error?: string }> {
     if (supabase) {
       // Create user in Supabase Auth if password is provided
       if (password && tempAdminClient) {
@@ -620,16 +620,15 @@ export const DataService = {
             if (errMsg.includes('already registered')) {
               console.log('Usuario ya registrado en Auth, procediendo a agregarlo como admin_users');
             } else if (errMsg.includes('rate limit') || errMsg.includes('too many requests') || status === 429) {
-              alert('Límite de seguridad de Supabase alcanzado (Demasiadas peticiones desde tu red). Has hecho muchos intentos de registro seguidos. Por favor, espera 1 hora e intenta de nuevo, o desactiva los límites en tu panel de Supabase.');
-              return null;
+              return { success: false, error: 'Límite de seguridad alcanzado (Demasiadas peticiones). Espera 1 hora e intenta de nuevo.' };
             } else {
               console.warn('Supabase auth sign up error:', signUpError);
-              return null;
+              return { success: false, error: 'Error de autenticación: ' + signUpError.message };
             }
           }
-        } catch (e) {
+        } catch (e: any) {
           console.warn('Supabase auth sign up exception:', e);
-          return null;
+          return { success: false, error: 'Excepción de Auth: ' + (e?.message || 'Error desconocido') };
         }
       }
 
@@ -639,17 +638,22 @@ export const DataService = {
         name,
         createdAt: new Date().toLocaleDateString('en-US')
       };
+      
       try {
         const { data, error } = await supabase.from('admin_users').insert([newUser]).select().single();
         if (error) {
           console.error('Supabase admin_users insert error:', error);
+          return { success: false, error: 'Error en base de datos: ' + error.message };
         }
-        if (!error && data) return data as AdminUser;
-      } catch (err) {
+        if (!error && data) {
+          return { success: true, data: data as AdminUser };
+        }
+      } catch (err: any) {
         console.warn('Supabase add admin error:', err);
+        return { success: false, error: 'Excepción de base de datos: ' + (err?.message || 'Error desconocido') };
       }
     }
-    return null;
+    return { success: false, error: 'No se pudo conectar a la base de datos' };
   },
 
   async deleteAdminUser(id: string): Promise<void> {
