@@ -110,12 +110,17 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   // Form states for managing admin users
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
+  const [isLoadingAdmins, setIsLoadingAdmins] = useState(true);
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [newAdminName, setNewAdminName] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
 
   React.useEffect(() => {
-    DataService.getAdminUsers().then(setAdminUsers);
+    setIsLoadingAdmins(true);
+    DataService.getAdminUsers().then((users) => {
+      setAdminUsers(users);
+      setIsLoadingAdmins(false);
+    });
   }, []);
 
   const handleAddAdmin = async (e: React.FormEvent) => {
@@ -1054,7 +1059,12 @@ export const AdminView: React.FC<AdminViewProps> = ({
               <div className="bg-[#faf2f0] border border-[#e9e1df] rounded-2xl p-6 shadow-sm overflow-hidden">
                 <h3 className="font-bold text-[#442a22] mb-4">Usuarios Autorizados</h3>
                 
-                {adminUsers.length === 0 ? (
+                {isLoadingAdmins ? (
+                  <div className="text-center py-8 text-[#75584d] flex flex-col items-center justify-center">
+                    <RefreshCw className="w-8 h-8 animate-spin text-[#D4AF37] mb-3" />
+                    <p>Cargando administradores...</p>
+                  </div>
+                ) : adminUsers.length === 0 ? (
                   <div className="text-center py-8 text-[#75584d]">
                     <ShieldCheck className="w-12 h-12 mx-auto mb-3 opacity-20" />
                     <p>No hay administradores registrados.</p>
