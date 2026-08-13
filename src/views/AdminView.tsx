@@ -106,6 +106,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [devotionalAuthor, setDevotionalAuthor] = useState('');
   const [devotionalDate, setDevotionalDate] = useState('');
   const [isUploadingDevotionalMedia, setIsUploadingDevotionalMedia] = useState(false);
+  const [isSavingDevotional, setIsSavingDevotional] = useState(false);
   const devotionalMediaFileInputRef = useRef<HTMLInputElement>(null);
 
   // Form states for managing admin users
@@ -165,6 +166,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [sermonImageUrl, setSermonImageUrl] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuDqTp-rwCGJ5Kerwpfgv2DvjZlDXANtpReyhozTBJokn2BSauW3K_90NUrA7r5Et4ZHNQv-22As5yeEUP9YGowszb1m_FurlfBPjRULRfCzcZ4NnuG2OEahexpBwmbuMMZhnZH6cdRj9WJVFRgyKgSpJy5g2bT4LJbyPVLZpgon2IMJxbhmjL_3nfbK7lPf84eoXGQ3Nt6H4JDShRnKK5oW_J5iM9byn9G5ezSiS2BlSuD25BZufBnD');
   const [sermonYoutubeUrl, setSermonYoutubeUrl] = useState('');
   const [sermonYoutubeStartMinute, setSermonYoutubeStartMinute] = useState(0);
+  const [isSavingSermon, setIsSavingSermon] = useState(false);
 
   // Form states for adding event
   const [eventTitle, setEventTitle] = useState('');
@@ -175,12 +177,15 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [eventDescription, setEventDescription] = useState('');
   const [eventLeaderName, setEventLeaderName] = useState('');
   const [eventContactPhone, setEventContactPhone] = useState('');
+  const [isSavingEvent, setIsSavingEvent] = useState(false);
 
   // Form states for managing leaders
   const [leaderName, setLeaderName] = useState('');
   const [leaderRole, setLeaderRole] = useState('Pastor Co-Líder');
   const [leaderPhone, setLeaderPhone] = useState('');
-  const [leaderEmail, setLeaderEmail] = useState('');
+  const [leaderTwitterUrl, setLeaderTwitterUrl] = useState('');
+  const [leaderYoutubeUrl, setLeaderYoutubeUrl] = useState('');
+  const [isSavingLeader, setIsSavingLeader] = useState(false);
   const [leaderImageUrl, setLeaderImageUrl] = useState('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80');
   const [leaderBio, setLeaderBio] = useState('');
   const [editingLeaderId, setEditingLeaderId] = useState<string | null>(null);
@@ -220,6 +225,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   // YouTube & Live Stream settings
   const [youtubeUrl, setYoutubeUrl] = useState(settings.youtubeUrl || '');
   const [youtubeCoverUrl, setYoutubeCoverUrl] = useState(settings.youtubeChannelCoverUrl || '');
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [isLiveStreaming, setIsLiveStreaming] = useState(settings.isLiveStreaming || false);
   const [liveStreamVideoId, setLiveStreamVideoId] = useState(settings.liveStreamVideoId || '');
   const [liveStreamTitle, setLiveStreamTitle] = useState(settings.liveStreamTitle || '');
@@ -356,27 +362,32 @@ export const AdminView: React.FC<AdminViewProps> = ({
     e.preventDefault();
     if (!sermonTitle.trim() || !sermonDescription.trim()) return;
 
-    await DataService.addSermon({
-      title: sermonTitle,
-      series: sermonSeries,
-      year: new Date().getFullYear().toString(),
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      pastor: sermonPastor,
-      pastorInitials: sermonPastor.split(' ').map(n => n[0]).join('').substring(0, 2),
-      passage: sermonPassage,
-      description: sermonDescription,
-      imageUrl: sermonImageUrl,
-      youtubeUrl: sermonYoutubeUrl.trim() || undefined,
-      youtubeStartMinute: sermonYoutubeStartMinute > 0 ? sermonYoutubeStartMinute : undefined
-    });
+    setIsSavingSermon(true);
+    try {
+      await DataService.addSermon({
+        title: sermonTitle,
+        series: sermonSeries,
+        year: new Date().getFullYear().toString(),
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        pastor: sermonPastor,
+        pastorInitials: sermonPastor.split(' ').map(n => n[0]).join('').substring(0, 2),
+        passage: sermonPassage,
+        description: sermonDescription,
+        imageUrl: sermonImageUrl,
+        youtubeUrl: sermonYoutubeUrl.trim() || undefined,
+        youtubeStartMinute: sermonYoutubeStartMinute > 0 ? sermonYoutubeStartMinute : undefined
+      });
 
-    const freshSermons = await DataService.getSermons();
-    onSermonsUpdated(freshSermons);
-    onSuccessToast('¡Sermón agregado con éxito!');
-    setSermonTitle('');
-    setSermonDescription('');
-    setSermonYoutubeUrl('');
-    setSermonYoutubeStartMinute(0);
+      const freshSermons = await DataService.getSermons();
+      onSermonsUpdated(freshSermons);
+      onSuccessToast('¡Sermón agregado con éxito!');
+      setSermonTitle('');
+      setSermonDescription('');
+      setSermonYoutubeUrl('');
+      setSermonYoutubeStartMinute(0);
+    } finally {
+      setIsSavingSermon(false);
+    }
   };
 
   const handleDeleteSermon = async (id: string, title: string) => {
@@ -392,28 +403,33 @@ export const AdminView: React.FC<AdminViewProps> = ({
     e.preventDefault();
     if (!eventTitle.trim() || !eventDescription.trim()) return;
 
-    await DataService.addEvent({
-      title: eventTitle,
-      category: eventCategory,
-      date: eventDate,
-      time: eventTime,
-      location: eventLocation,
-      description: eventDescription,
-      leaderName: eventLeaderName || undefined,
-      contactPhone: eventContactPhone || undefined,
-      registrationOpen: true
-    });
+    setIsSavingEvent(true);
+    try {
+      await DataService.addEvent({
+        title: eventTitle,
+        category: eventCategory,
+        date: eventDate,
+        time: eventTime,
+        location: eventLocation,
+        description: eventDescription,
+        leaderName: eventLeaderName || undefined,
+        contactPhone: eventContactPhone || undefined,
+        registrationOpen: true
+      });
 
-    const freshEvents = await DataService.getEvents();
-    onEventsUpdated(freshEvents);
-    setEventTitle('');
-    setEventDate('');
-    setEventTime('18:00');
-    setEventLocation('Salón Principal');
-    setEventDescription('');
-    setEventLeaderName('');
-    setEventContactPhone('');
-    onSuccessToast('¡Evento publicado con éxito!');
+      const freshEvents = await DataService.getEvents();
+      onEventsUpdated(freshEvents);
+      setEventTitle('');
+      setEventDate('');
+      setEventTime('18:00');
+      setEventLocation('Salón Principal');
+      setEventDescription('');
+      setEventLeaderName('');
+      setEventContactPhone('');
+      onSuccessToast('¡Evento publicado con éxito!');
+    } finally {
+      setIsSavingEvent(false);
+    }
   };
 
   const handleDeleteEvent = async (id: string, title: string) => {
@@ -429,40 +445,45 @@ export const AdminView: React.FC<AdminViewProps> = ({
     e.preventDefault();
     if (!leaderName.trim() || !leaderRole.trim()) return;
 
-    if (editingLeaderId) {
-      await DataService.updateLeader({
-        id: editingLeaderId,
-        name: leaderName,
-        role: leaderRole,
-        phone: leaderPhone,
-        email: leaderEmail,
-        imageUrl: leaderImageUrl,
-        bio: leaderBio
-      });
-      onSuccessToast('¡Información del líder actualizada!');
-    } else {
-      await DataService.addLeader({
-        name: leaderName,
-        role: leaderRole,
-        phone: leaderPhone,
-        email: leaderEmail,
-        imageUrl: leaderImageUrl,
-        bio: leaderBio
-      });
-      onSuccessToast('¡Nuevo líder/pastor agregado!');
+    setIsSavingLeader(true);
+    try {
+      if (editingLeaderId) {
+        await DataService.updateLeader({
+          id: editingLeaderId,
+          name: leaderName,
+          role: leaderRole,
+          phone: leaderPhone,
+          email: leaderEmail,
+          imageUrl: leaderImageUrl,
+          bio: leaderBio
+        });
+        onSuccessToast('¡Información del líder actualizada!');
+      } else {
+        await DataService.addLeader({
+          name: leaderName,
+          role: leaderRole,
+          phone: leaderPhone,
+          email: leaderEmail,
+          imageUrl: leaderImageUrl,
+          bio: leaderBio
+        });
+        onSuccessToast('¡Nuevo líder/pastor agregado!');
+      }
+
+      const freshLeaders = await DataService.getLeaders();
+      onLeadersUpdated(freshLeaders);
+
+      // Reset form
+      setLeaderName('');
+      setLeaderRole('Pastor Co-Líder');
+      setLeaderPhone('');
+      setLeaderEmail('');
+      setLeaderImageUrl('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80');
+      setLeaderBio('');
+      setEditingLeaderId(null);
+    } finally {
+      setIsSavingLeader(false);
     }
-
-    const freshLeaders = await DataService.getLeaders();
-    onLeadersUpdated(freshLeaders);
-
-    // Reset form
-    setLeaderName('');
-    setLeaderRole('Pastor Co-Líder');
-    setLeaderPhone('');
-    setLeaderEmail('');
-    setLeaderImageUrl('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80');
-    setLeaderBio('');
-    setEditingLeaderId(null);
   };
 
   const handleEditLeader = (leader: ChurchLeader) => {
@@ -500,38 +521,43 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updated = await DataService.saveSettings({
-      ...settings,
-      maintenanceMode: maintMode,
-      churchName,
-      churchAddress: churchAddr,
-      churchPhone,
-      churchEmail,
-      logoUrl: churchLogoUrl,
-      heroTitle,
-      heroSubtitle,
-      heroVerse: heroVersesList[0] || '',
-      heroVerses: heroVersesList.filter(v => v.trim().length > 0),
-      heroDescription,
-      heroBackgroundImageUrl: heroBgUrl,
-      heroBgOpacity,
-      carouselImages: carouselImages.filter(img => img.trim().length > 0),
-      youtubeUrl,
-      youtubeChannelCoverUrl: youtubeCoverUrl,
-      isLiveStreaming,
-      liveStreamVideoId,
-      liveStreamTitle,
-      facebookUrl,
-      instagramUrl,
-      whatsappUrl,
-      twitterUrl,
-      tiktokUrl,
-      googleMapsEmbedUrl: mapsEmbedUrl,
-      googleMapsDirectionsUrl: mapsDirectionsUrl,
-      locationSchedule
-    });
-    onSettingsUpdated(updated);
-    onSuccessToast('Configuración guardada con éxito.');
+    setIsSavingSettings(true);
+    try {
+      const updated = await DataService.saveSettings({
+        ...settings,
+        maintenanceMode: maintMode,
+        churchName,
+        churchAddress: churchAddr,
+        churchPhone,
+        churchEmail,
+        logoUrl: churchLogoUrl,
+        heroTitle,
+        heroSubtitle,
+        heroVerse: heroVersesList[0] || '',
+        heroVerses: heroVersesList.filter(v => v.trim().length > 0),
+        heroDescription,
+        heroBackgroundImageUrl: heroBgUrl,
+        heroBgOpacity,
+        carouselImages: carouselImages.filter(img => img.trim().length > 0),
+        youtubeUrl,
+        youtubeChannelCoverUrl: youtubeCoverUrl,
+        isLiveStreaming,
+        liveStreamVideoId,
+        liveStreamTitle,
+        facebookUrl,
+        instagramUrl,
+        whatsappUrl,
+        twitterUrl,
+        tiktokUrl,
+        googleMapsEmbedUrl: mapsEmbedUrl,
+        googleMapsDirectionsUrl: mapsDirectionsUrl,
+        locationSchedule
+      });
+      onSettingsUpdated(updated);
+      onSuccessToast('Configuración guardada con éxito.');
+    } finally {
+      setIsSavingSettings(false);
+    }
   };
 
   return (
@@ -767,45 +793,50 @@ export const AdminView: React.FC<AdminViewProps> = ({
                     return;
                   }
 
-                  let finalMediaUrl = devotionalMediaUrl;
-                  if (devotionalType === 'image' || devotionalType === 'video') {
-                    if (devotionalMediaFileInputRef.current?.files?.[0]) {
-                      setIsUploadingDevotionalMedia(true);
-                      const uploadedUrl = await DataService.uploadDevotionalMedia(devotionalMediaFileInputRef.current.files[0]);
-                      setIsUploadingDevotionalMedia(false);
-                      if (uploadedUrl) {
-                        finalMediaUrl = uploadedUrl;
-                      } else {
-                        alert('Error al subir el archivo multimedia.');
+                  setIsSavingDevotional(true);
+                  try {
+                    let finalMediaUrl = devotionalMediaUrl;
+                    if (devotionalType === 'image' || devotionalType === 'video') {
+                      if (devotionalMediaFileInputRef.current?.files?.[0]) {
+                        setIsUploadingDevotionalMedia(true);
+                        const uploadedUrl = await DataService.uploadDevotionalMedia(devotionalMediaFileInputRef.current.files[0]);
+                        setIsUploadingDevotionalMedia(false);
+                        if (uploadedUrl) {
+                          finalMediaUrl = uploadedUrl;
+                        } else {
+                          alert('Error al subir el archivo multimedia.');
+                          return;
+                        }
+                      } else if (!finalMediaUrl) {
+                        alert('Selecciona un archivo para el devocional.');
                         return;
                       }
-                    } else if (!finalMediaUrl) {
-                      alert('Selecciona un archivo para el devocional.');
-                      return;
                     }
-                  }
 
-                  const newDevo = await DataService.addDevotional({
-                    title: devotionalTitle,
-                    type: devotionalType,
-                    content: devotionalContent,
-                    mediaUrl: finalMediaUrl,
-                    youtubeUrl: devotionalYoutubeUrl,
-                    author: devotionalAuthor,
-                    date: devotionalDate || new Date().toISOString().split('T')[0]
-                  });
-                  onDevotionalsUpdated([newDevo, ...devotionals]);
-                  
-                  // Reset form
-                  setDevotionalTitle('');
-                  setDevotionalContent('');
-                  setDevotionalMediaUrl('');
-                  setDevotionalYoutubeUrl('');
-                  setDevotionalAuthor('');
-                  if (devotionalMediaFileInputRef.current) {
-                    devotionalMediaFileInputRef.current.value = '';
+                    const newDevo = await DataService.addDevotional({
+                      title: devotionalTitle,
+                      type: devotionalType,
+                      content: devotionalContent,
+                      mediaUrl: finalMediaUrl,
+                      youtubeUrl: devotionalYoutubeUrl,
+                      author: devotionalAuthor,
+                      date: devotionalDate || new Date().toISOString().split('T')[0]
+                    });
+                    onDevotionalsUpdated([newDevo, ...devotionals]);
+                    
+                    // Reset form
+                    setDevotionalTitle('');
+                    setDevotionalContent('');
+                    setDevotionalMediaUrl('');
+                    setDevotionalYoutubeUrl('');
+                    setDevotionalAuthor('');
+                    if (devotionalMediaFileInputRef.current) {
+                      devotionalMediaFileInputRef.current.value = '';
+                    }
+                    onSuccessToast('Devocional agregado exitosamente.');
+                  } finally {
+                    setIsSavingDevotional(false);
                   }
-                  onSuccessToast('Devocional agregado exitosamente.');
                 }} 
                 className="bg-[#faf2f0] border border-[#e9e1df] rounded-2xl p-6 shadow-sm space-y-4"
               >
@@ -1296,10 +1327,15 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-xs hover:bg-[#5d4037] transition-all flex items-center justify-center gap-1.5"
+                disabled={isSavingSermon}
+                className="w-full py-2.5 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-xs hover:bg-[#5d4037] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Plus className="w-4 h-4 text-[#D4AF37]" />
-                <span>Publicar Sermón</span>
+                {isSavingSermon ? (
+                  <RefreshCw className="w-4 h-4 animate-spin text-[#D4AF37]" />
+                ) : (
+                  <Plus className="w-4 h-4 text-[#D4AF37]" />
+                )}
+                <span>{isSavingSermon ? 'Guardando...' : 'Publicar Sermón'}</span>
               </button>
             </form>
           </div>
@@ -1454,10 +1490,15 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-xs hover:bg-[#5d4037] transition-all flex items-center justify-center gap-1.5"
+                disabled={isSavingEvent}
+                className="w-full py-2.5 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-xs hover:bg-[#5d4037] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Plus className="w-4 h-4 text-[#D4AF37]" />
-                <span>Publicar Evento</span>
+                {isSavingEvent ? (
+                  <RefreshCw className="w-4 h-4 animate-spin text-[#D4AF37]" />
+                ) : (
+                  <Plus className="w-4 h-4 text-[#D4AF37]" />
+                )}
+                <span>{isSavingEvent ? 'Guardando...' : 'Publicar Evento'}</span>
               </button>
             </form>
           </div>
@@ -1642,10 +1683,15 @@ export const AdminView: React.FC<AdminViewProps> = ({
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-full bg-[#442a22] text-[#fff8f6] text-xs font-bold hover:bg-[#5d4037] shadow-md transition-all flex items-center gap-2"
+                  disabled={isSavingLeader}
+                  className="px-6 py-2.5 rounded-full bg-[#442a22] text-[#fff8f6] text-xs font-bold hover:bg-[#5d4037] shadow-md transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <UserPlus className="w-4 h-4 text-[#D4AF37]" />
-                  <span>{editingLeaderId ? 'Guardar Cambios del Líder' : 'Agregar Líder'}</span>
+                  {isSavingLeader ? (
+                    <RefreshCw className="w-4 h-4 animate-spin text-[#D4AF37]" />
+                  ) : (
+                    <UserPlus className="w-4 h-4 text-[#D4AF37]" />
+                  )}
+                  <span>{isSavingLeader ? 'Guardando...' : (editingLeaderId ? 'Guardar Cambios del Líder' : 'Agregar Líder')}</span>
                 </button>
               </div>
             </form>
@@ -2592,10 +2638,15 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
             <button
               type="submit"
-              className="py-3 px-6 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-xs hover:bg-[#5d4037] shadow-md transition-all flex items-center gap-2"
+              disabled={isSavingSettings}
+              className="py-3 px-6 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-xs hover:bg-[#5d4037] shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Settings className="w-4 h-4 text-[#D4AF37]" />
-              <span>Guardar Configuración y Logo</span>
+              {isSavingSettings ? (
+                <RefreshCw className="w-4 h-4 animate-spin text-[#D4AF37]" />
+              ) : (
+                <Settings className="w-4 h-4 text-[#D4AF37]" />
+              )}
+              <span>{isSavingSettings ? 'Guardando...' : 'Guardar Configuración y Logo'}</span>
             </button>
           </form>
         </div>

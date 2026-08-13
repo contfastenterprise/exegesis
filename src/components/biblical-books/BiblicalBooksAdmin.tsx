@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BiblicalBook, CreateBiblicalBookInput, UpdateBiblicalBookInput } from '../../types';
 import { DataService } from '../../lib/supabase';
-import { Plus, Edit, Trash2, BookOpen, ToggleLeft, ToggleRight, Check, X, Upload } from 'lucide-react';
+import { Plus, Edit, Trash2, BookOpen, ToggleLeft, ToggleRight, Check, X, Upload, RefreshCw } from 'lucide-react';
 
 interface BiblicalBooksAdminProps {
   onSuccessToast: (msg: string) => void;
@@ -14,6 +14,7 @@ export const BiblicalBooksAdmin: React.FC<BiblicalBooksAdminProps> = ({ onSucces
   // Form State
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isSavingBook, setIsSavingBook] = useState(false);
   
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -105,37 +106,42 @@ export const BiblicalBooksAdmin: React.FC<BiblicalBooksAdminProps> = ({ onSucces
     e.preventDefault();
     if (!title) return;
 
-    const bookData = {
-      title,
-      description,
-      author,
-      publisher,
-      category: category === 'Todos' ? '' : category,
-      audience: audience === 'Todos' ? '' : audience,
-      ageRange,
-      quarter: quarter === '' ? undefined : Number(quarter),
-      year: year === '' ? undefined : Number(year),
-      lessonCount: lessonCount === '' ? undefined : Number(lessonCount),
-      coverUrl,
-      fileUrl,
-      isActive,
-      sortOrder
-    };
+    setIsSavingBook(true);
+    try {
+      const bookData = {
+        title,
+        description,
+        author,
+        publisher,
+        category: category === 'Todos' ? '' : category,
+        audience: audience === 'Todos' ? '' : audience,
+        ageRange,
+        quarter: quarter === '' ? undefined : Number(quarter),
+        year: year === '' ? undefined : Number(year),
+        lessonCount: lessonCount === '' ? undefined : Number(lessonCount),
+        coverUrl,
+        fileUrl,
+        isActive,
+        sortOrder
+      };
 
-    if (isEditing && editingId) {
-      const updated = await DataService.updateBiblicalBook(editingId, bookData);
-      if (updated) {
-        setBooks(books.map(b => b.id === editingId ? updated : b));
-        onSuccessToast('Libro actualizado exitosamente.');
-        resetForm();
+      if (isEditing && editingId) {
+        const updated = await DataService.updateBiblicalBook(editingId, bookData);
+        if (updated) {
+          setBooks(books.map(b => b.id === editingId ? updated : b));
+          onSuccessToast('Libro actualizado exitosamente.');
+          resetForm();
+        }
+      } else {
+        const newBook = await DataService.addBiblicalBook(bookData);
+        if (newBook) {
+          setBooks([newBook, ...books]);
+          onSuccessToast('Libro creado exitosamente.');
+          resetForm();
+        }
       }
-    } else {
-      const newBook = await DataService.addBiblicalBook(bookData);
-      if (newBook) {
-        setBooks([newBook, ...books]);
-        onSuccessToast('Libro creado exitosamente.');
-        resetForm();
-      }
+    } finally {
+      setIsSavingBook(false);
     }
   };
 
@@ -283,9 +289,19 @@ export const BiblicalBooksAdmin: React.FC<BiblicalBooksAdminProps> = ({ onSucces
 
           <div className="mt-6 flex items-center justify-between">
             <span className="text-[11px] font-bold text-[#75584d] uppercase">* Campos obligatorios</span>
-            <button type="submit" className="px-8 py-3 bg-[#442a22] text-[#fff8f6] font-bold rounded-xl shadow-md hover:bg-[#321f19] flex items-center gap-2">
-              {isEditing ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-              {isEditing ? 'Guardar Cambios' : 'Crear Libro'}
+            <button 
+              type="submit" 
+              disabled={isSavingBook}
+              className="px-8 py-3 bg-[#442a22] text-[#fff8f6] font-bold rounded-xl shadow-md hover:bg-[#321f19] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSavingBook ? (
+                <RefreshCw className="w-5 h-5 animate-spin" />
+              ) : isEditing ? (
+                <Check className="w-5 h-5" />
+              ) : (
+                <Plus className="w-5 h-5" />
+              )}
+              {isSavingBook ? 'Guardando...' : (isEditing ? 'Guardar Cambios' : 'Crear Libro')}
             </button>
           </div>
         </form>

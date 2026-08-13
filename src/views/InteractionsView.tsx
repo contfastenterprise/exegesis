@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CommunityPost } from '../types';
-import { Heart, MessageCircle, Share2, PlusCircle, User, Sparkles, Send } from 'lucide-react';
+import { Heart, MessageCircle, Share2, PlusCircle, User, Sparkles, Send, RefreshCw } from 'lucide-react';
 import { DataService } from '../lib/supabase';
 
 interface InteractionsViewProps {
@@ -96,10 +96,14 @@ export const InteractionsView: React.FC<InteractionsViewProps> = ({
             <button
               type="submit"
               disabled={isPosting}
-              className="px-6 py-2.5 rounded-full bg-[#442a22] text-[#fff8f6] font-semibold text-xs hover:bg-[#5d4037] shadow-md transition-all flex items-center gap-2"
+              className="px-6 py-2.5 rounded-full bg-[#442a22] text-[#fff8f6] font-semibold text-xs hover:bg-[#5d4037] shadow-md transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send className="w-3.5 h-3.5 text-[#D4AF37]" />
-              {isPosting ? 'Publicando...' : 'Publicar Testimonio'}
+              {isPosting ? (
+                <RefreshCw className="w-3.5 h-3.5 text-[#D4AF37] animate-spin" />
+              ) : (
+                <Send className="w-3.5 h-3.5 text-[#D4AF37]" />
+              )}
+              <span>{isPosting ? 'Publicando...' : 'Publicar Testimonio'}</span>
             </button>
           </div>
         </form>
