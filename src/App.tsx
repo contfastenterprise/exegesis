@@ -200,10 +200,41 @@ export function App() {
     await AuthService.logout();
     setSession({ user: null, isAdmin: false });
     addToast('Sesión cerrada', 'Has salido del área de administración.', 'info');
-    if (currentTab === 'admin') {
-      setCurrentTab('home');
-    }
+    setCurrentTab((prevTab) => prevTab === 'admin' ? 'home' : prevTab);
   };
+
+  // Auto-logout for inactivity
+  useEffect(() => {
+    if (!session.user) return; // Only apply if user is logged in
+
+    let inactivityTimeout: NodeJS.Timeout;
+
+    const resetInactivityTimeout = () => {
+      clearTimeout(inactivityTimeout);
+      inactivityTimeout = setTimeout(() => {
+        handleLogout();
+      }, 5 * 60 * 1000); // 5 minutes
+    };
+
+    resetInactivityTimeout();
+    
+    // Listen to various user interactions
+    const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+    
+    const handleActivity = () => resetInactivityTimeout();
+
+    activityEvents.forEach((evt) => {
+      document.addEventListener(evt, handleActivity, { passive: true });
+    });
+
+    return () => {
+      clearTimeout(inactivityTimeout);
+      activityEvents.forEach((evt) => {
+        document.removeEventListener(evt, handleActivity);
+      });
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.user]);
 
   const featuredSermon = sermons.find((s) => s.isFeatured) || sermons[0] || null;
 
