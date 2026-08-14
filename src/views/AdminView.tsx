@@ -221,9 +221,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [heroDescription, setHeroDescription] = useState(settings.heroDescription || 'Un espacio donde adorar, aprender de las Escrituras y crecer juntos como una familia de fe acogedora en Cathedral City. Todos son bienvenidos a acompañarnos este domingo.');
   const [heroBgUrl, setHeroBgUrl] = useState(settings.heroBackgroundImageUrl || 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1600&auto=format&fit=crop&q=80');
   const [heroBgOpacity, setHeroBgOpacity] = useState(settings.heroBgOpacity ?? 45);
-  const [carouselImages, setCarouselImages] = useState<string[]>(settings.carouselImages || []);
-
-  // YouTube & Live Stream settings
+  const [heroImage, setHeroImage] = useState(settings.heroImage || '');
   const [youtubeUrl, setYoutubeUrl] = useState(settings.youtubeUrl || '');
   const [youtubeCoverUrl, setYoutubeCoverUrl] = useState(settings.youtubeChannelCoverUrl || '');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
@@ -539,7 +537,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
         heroDescription,
         heroBackgroundImageUrl: heroBgUrl,
         heroBgOpacity,
-        carouselImages: carouselImages.filter(img => img.trim().length > 0),
+        heroImage: heroImage,
         youtubeUrl,
         youtubeChannelCoverUrl: youtubeCoverUrl,
         isLiveStreaming,
@@ -1982,7 +1980,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
               <summary className="flex items-center justify-between p-5 cursor-pointer list-none hover:bg-[#faf2f0] transition-colors outline-none focus:bg-[#faf2f0]">
                 <div>
                   <h4 className="font-serif text-lg font-bold text-[#442a22]">Diseño de Portada</h4>
-                  <p className="text-xs text-[#75584d] mt-0.5">Banner principal, carrusel y versículos rotativos.</p>
+                  <p className="text-xs text-[#75584d] mt-0.5">Banner principal y versículos rotativos.</p>
                 </div>
                 <ChevronDown className="w-5 h-5 text-[#75584d] group-open:rotate-180 transition-transform duration-300" />
               </summary>
@@ -2094,60 +2092,6 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#e9e1df]">
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-[11px] font-bold uppercase text-[#1e1b1a] flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
-                      <span>Carrusel de Imágenes 3D</span>
-                    </label>
-                    <span className="text-[10px] text-[#75584d] bg-[#efe6e4] px-2 py-0.5 rounded-full font-medium">
-                      {carouselImages.length} imagen{carouselImages.length !== 1 ? 'es' : ''}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-[#75584d] mb-3">
-                    Añade URLs de imágenes para mostrarlas en el carrusel animado 3D de la página principal.
-                  </p>
-                  
-                  <div className="space-y-2">
-                    {carouselImages.map((img, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <span className="w-6 text-center text-xs font-bold text-[#D4AF37]">#{index + 1}</span>
-                        <input
-                          type="url"
-                          value={img}
-                          onChange={(e) => {
-                            const newImgs = [...carouselImages];
-                            newImgs[index] = e.target.value;
-                            setCarouselImages(newImgs);
-                          }}
-                          placeholder="https://ejemplo.com/imagen.jpg"
-                          className="flex-1 px-3 py-2 rounded-xl bg-white border border-[#e9e1df] text-xs text-[#1e1b1a] focus:outline-none focus:border-[#442a22]"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newImgs = carouselImages.filter((_, i) => i !== index);
-                            setCarouselImages(newImgs);
-                          }}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Eliminar esta imagen"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="mt-2">
-                    <button
-                      type="button"
-                      onClick={() => setCarouselImages([...carouselImages, ''])}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#442a22] hover:bg-[#5d4037] text-white text-xs font-semibold transition-colors"
-                    >
-                      <Plus className="w-3.5 h-3.5 text-[#D4AF37]" />
-                      <span>Agregar imagen al carrusel</span>
-                    </button>
-                  </div>
                 </div>
 
                 <div className="pt-4 border-t border-[#e9e1df]">
