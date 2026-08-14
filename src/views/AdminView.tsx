@@ -183,6 +183,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [leaderName, setLeaderName] = useState('');
   const [leaderRole, setLeaderRole] = useState('Pastor Co-Líder');
   const [leaderPhone, setLeaderPhone] = useState('');
+  const [leaderEmail, setLeaderEmail] = useState('');
   const [leaderTwitterUrl, setLeaderTwitterUrl] = useState('');
   const [leaderYoutubeUrl, setLeaderYoutubeUrl] = useState('');
   const [isSavingLeader, setIsSavingLeader] = useState(false);
