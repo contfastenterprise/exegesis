@@ -12,7 +12,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ settings, onSelectTa
   const address = settings?.churchAddress || '123 Sanctuary Way, Cathedral City, CA 92234';
   const phone = settings?.churchPhone || '+1 (555) 123-4567';
   const email = settings?.churchEmail || 'contacto@gracetruth.org';
-  const embedUrl = settings?.googleMapsEmbedUrl || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d105912.42080373809!2d-116.51730097721245!3d33.81180258066597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80db1cb9e72ef79f%3A0x86708605ee715f5a!2sCathedral%20City%2C%20CA!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus';
+  const embedUrl = settings?.googleMapsEmbedUrl || `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
   const directionsUrl = settings?.googleMapsDirectionsUrl || `https://maps.google.com/?q=${encodeURIComponent(address)}`;
   const customSchedule = settings?.locationSchedule;
 
