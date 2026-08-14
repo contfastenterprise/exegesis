@@ -20,9 +20,10 @@ interface FooterProps {
   onSelectTab: (tab: NavTab) => void;
   onOpenAuth: () => void;
   settings?: SystemSettings;
+  session: UserSession;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onSelectTab, onOpenAuth, settings }) => {
+export const Footer: React.FC<FooterProps> = ({ onSelectTab, onOpenAuth, settings, session }) => {
   const churchName = settings?.churchName || 'Grace & Truth';
   const logoUrl = settings?.logoUrl;
   const address = settings?.churchAddress || '123 Sanctuary Way, Cathedral City, CA 92234';
@@ -233,15 +234,23 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, onOpenAuth, setting
             </ul>
 
             <div className="mt-6 pt-4 border-t border-[#5d4037]">
-              <button
-                onClick={() => {
-                  onSelectTab('admin');
-                }}
-                className="inline-flex items-center gap-1.5 text-xs text-[#D4AF37] hover:underline"
-              >
-                <Lock className="w-3.5 h-3.5" />
-                <span>Panel de Administración</span>
-              </button>
+              {session.user ? (
+                <button
+                  onClick={() => onSelectTab('admin')}
+                  className="inline-flex items-center gap-1.5 text-xs text-[#D4AF37] hover:underline"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Panel de Administración</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => onOpenAuth()}
+                  className="inline-flex items-center gap-1.5 text-xs text-[#D4AF37] hover:underline"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Iniciar Sesión</span>
+                </button>
+              )}
             </div>
           </div>
 

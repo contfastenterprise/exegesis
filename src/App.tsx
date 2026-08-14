@@ -369,7 +369,7 @@ export function App() {
           </RequireAuth>
         )}
         {/* Fallback para 404 (Tab Inexistente) */}
-        {!['home', 'sermons', 'events', 'help', 'interactions', 'leaders', 'location', 'devotionals', 'biblical-books', 'admin'].includes(currentTab) && (
+        {!['home', 'sermons', 'activities', 'help', 'interactions', 'leaders', 'location', 'devotionals', 'biblical-books', 'admin'].includes(currentTab) && (
           <NotFoundPage
             onGoHome={() => setCurrentTab('home')}
             onGoBack={() => setCurrentTab(previousTab)}
@@ -382,6 +382,7 @@ export function App() {
         onSelectTab={setCurrentTab}
         onOpenAuth={() => setIsAuthModalOpen(true)}
         settings={settings}
+        session={session}
       />
 
       {/* Modals & Popups */}

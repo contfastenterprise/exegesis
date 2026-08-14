@@ -239,7 +239,7 @@ export const Header: React.FC<HeaderProps> = ({
                 className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#442a22] text-[#fff8f6] text-xs font-semibold hover:bg-[#5d4037] shadow-sm transition-all whitespace-nowrap"
               >
                 <Lock className="w-3.5 h-3.5 text-[#D4AF37]" strokeWidth={1.5} />
-                <span>Admin</span>
+                <span>Iniciar Sesión</span>
               </button>
             )}
           </div>
@@ -269,9 +269,9 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Secondary Navigation Tab Bar (Identical on both Tablet and Desktop) */}
+            {/* Secondary Navigation Tab Bar (Identical on both Tablet and Desktop) */}
         <div className="hidden md:flex items-center justify-center overflow-x-auto py-2 border-t border-[#e9e1df]/70 scrollbar-none gap-1.5">
-          {navItems.map((item) => {
+          {navItems.filter(item => !item.isProtected || session.user).map((item) => {
             const isActive = currentTab === item.id;
             const Icon = item.icon;
             return (
@@ -286,9 +286,6 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#D4AF37]' : 'text-[#75584d]'}`} strokeWidth={1.5} />
                 <span>{item.label}</span>
-                {item.isProtected && !session.isAdmin && (
-                  <Lock className={`w-3 h-3 ${isActive ? 'text-[#D4AF37]' : 'text-[#75584d]'}`} strokeWidth={1.5} />
-                )}
                 {item.isProtected && session.isAdmin && (
                   <Sparkles className="w-3 h-3 text-[#D4AF37]" strokeWidth={1.5} />
                 )}
@@ -328,7 +325,7 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
 
                   <div className="space-y-2">
-                    {navItems.map((item) => {
+                    {navItems.filter(item => !item.isProtected || session.user).map((item) => {
                       const isActive = currentTab === item.id;
                       const Icon = item.icon;
                       return (
@@ -391,7 +388,7 @@ export const Header: React.FC<HeaderProps> = ({
                       className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#442a22] text-[#fff8f6] font-semibold text-sm shadow-sm hover:bg-[#5d4037] min-h-[44px]"
                     >
                       <Lock className="w-4 h-4 text-[#D4AF37]" strokeWidth={1.5} />
-                      <span>Admin</span>
+                      <span>Iniciar Sesión</span>
                     </button>
                   )}
                 </div>
