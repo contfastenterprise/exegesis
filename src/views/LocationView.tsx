@@ -12,8 +12,9 @@ export const LocationView: React.FC<LocationViewProps> = ({ settings, onSelectTa
   const address = settings?.churchAddress || '123 Sanctuary Way, Cathedral City, CA 92234';
   const phone = settings?.churchPhone || '+1 (555) 123-4567';
   const email = settings?.churchEmail || 'contacto@gracetruth.org';
-  const embedUrl = settings?.googleMapsEmbedUrl || `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
-  const directionsUrl = settings?.googleMapsDirectionsUrl || `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+  // Siempre usar mapa dinámico para evitar que el valor por defecto guardado anule el cambio de dirección
+  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+  const directionsUrl = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
   const customSchedule = settings?.locationSchedule;
 
   return (

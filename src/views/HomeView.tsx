@@ -609,7 +609,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {/* Map Preview Container */}
           <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-[#e9e1df] bg-white h-[260px] sm:h-[300px] relative">
             <iframe
-              src={settings?.googleMapsEmbedUrl || `https://maps.google.com/maps?q=${encodeURIComponent(settings?.churchAddress || '123 Sanctuary Way, Cathedral City')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(settings?.churchAddress || '123 Sanctuary Way, Cathedral City')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
               width="100%"
               height="100%"
               style={{ border: 0 }}
