@@ -82,7 +82,7 @@ export const LeadersView: React.FC<LeadersViewProps> = ({ leaders, settings, onS
                         />
                       ) : (
                         <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#442a22] text-[#D4AF37] flex items-center justify-center font-serif text-2xl font-bold border-2 border-[#D4AF37]/50 shadow-md">
-                          {leader.name.substring(0, 2).toUpperCase()}
+                          {(leader.name || 'L').substring(0, 2).toUpperCase()}
                         </div>
                       )}
 
@@ -91,7 +91,7 @@ export const LeadersView: React.FC<LeadersViewProps> = ({ leaders, settings, onS
                           {leader.role}
                         </span>
                         <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1e1b1a] leading-tight">
-                          {leader.name}
+                          {leader.name || 'Líder sin nombre'}
                         </h3>
                       </div>
                     </div>

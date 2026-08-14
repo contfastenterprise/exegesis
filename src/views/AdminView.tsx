@@ -1722,14 +1722,14 @@ export const AdminView: React.FC<AdminViewProps> = ({
                         />
                       ) : (
                         <div className="w-14 h-14 rounded-xl bg-[#442a22] text-[#D4AF37] flex items-center justify-center font-bold text-lg border border-[#D4AF37]">
-                          {leader.name.substring(0, 2).toUpperCase()}
+                          {(leader.name || 'L').substring(0, 2).toUpperCase()}
                         </div>
                       )}
                       <div className="space-y-1">
                         <span className="inline-block px-2 py-0.5 rounded bg-[#efe6e4] text-[#442a22] text-[10px] font-bold">
                           {leader.role}
                         </span>
-                        <h4 className="font-bold text-sm text-[#1e1b1a]">{leader.name}</h4>
+                        <h4 className="font-bold text-sm text-[#1e1b1a]">{leader.name || 'Líder sin nombre'}</h4>
                         {leader.phone && (
                           <p className="text-[11px] text-[#75584d] flex items-center gap-1">
                             <Phone className="w-3 h-3 text-emerald-600" />
