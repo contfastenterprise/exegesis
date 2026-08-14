@@ -221,7 +221,7 @@ export const AdminView: React.FC<AdminViewProps> = ({
   const [heroDescription, setHeroDescription] = useState(settings.heroDescription || 'Un espacio donde adorar, aprender de las Escrituras y crecer juntos como una familia de fe acogedora en Cathedral City. Todos son bienvenidos a acompañarnos este domingo.');
   const [heroBgUrl, setHeroBgUrl] = useState(settings.heroBackgroundImageUrl || 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1600&auto=format&fit=crop&q=80');
   const [heroBgOpacity, setHeroBgOpacity] = useState(settings.heroBgOpacity ?? 45);
-  const [heroImage, setHeroImage] = useState(settings.heroImage || '');
+  // YouTube & Live Stream settings
   const [youtubeUrl, setYoutubeUrl] = useState(settings.youtubeUrl || '');
   const [youtubeCoverUrl, setYoutubeCoverUrl] = useState(settings.youtubeChannelCoverUrl || '');
   const [isSavingSettings, setIsSavingSettings] = useState(false);
@@ -537,7 +537,6 @@ export const AdminView: React.FC<AdminViewProps> = ({
         heroDescription,
         heroBackgroundImageUrl: heroBgUrl,
         heroBgOpacity,
-        heroImage: heroImage,
         youtubeUrl,
         youtubeChannelCoverUrl: youtubeCoverUrl,
         isLiveStreaming,
