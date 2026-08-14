@@ -2092,8 +2092,6 @@ export const AdminView: React.FC<AdminViewProps> = ({
                   </div>
                 </div>
 
-                </div>
-
                 <div className="pt-4 border-t border-[#e9e1df]">
                   <label className="block text-[11px] font-bold uppercase text-[#1e1b1a] mb-1">
                     Título Principal de Bienvenida
