@@ -5,6 +5,7 @@ import { motionConfig, getPageVariants, TransitionType, pageTransitions } from '
 interface PageTransitionProps {
   children: React.ReactNode;
   pageKey: string;
+  key?: React.Key;
 }
 
 export function PageTransition({ children, pageKey }: PageTransitionProps) {

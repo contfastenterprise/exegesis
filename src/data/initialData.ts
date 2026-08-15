@@ -17,6 +17,8 @@ export const INITIAL_SYSTEM_SETTINGS: SystemSettings = {
   instagramUrl: '',
   whatsappUrl: '',
   logoUrl: '',
+  maintenanceMode: false,
+  primaryColor: '#D4AF37',
   carouselImages: [
     'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=800&auto=format&fit=crop&q=80',
     'https://images.unsplash.com/photo-1493612276216-ee3925520721?w=800&auto=format&fit=crop&q=80',
