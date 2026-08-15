@@ -295,17 +295,23 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* True Mobile Menu Drawer (Slides from Left) */}
+      {/* True Mobile Menu Drawer */}
       {createPortal(
         <AnimatePresence>
           {mobileMenuOpen && (
-            <div className="fixed inset-0 z-[100] flex md:hidden bg-black/50 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[100] flex md:hidden bg-black/50 backdrop-blur-sm items-start justify-center pt-4 px-4"
+            >
               <motion.div
-                initial={{ x: '-100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '-100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="w-3/4 max-w-sm bg-[#fff8f6] h-full shadow-2xl border-r border-[#e9e1df] p-6 flex flex-col justify-between overflow-y-auto"
+                initial={{ opacity: 0, scale: 0.98, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98, y: -5 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="w-full max-w-sm bg-[#fff8f6] rounded-3xl shadow-2xl border border-[#e9e1df] p-6 flex flex-col max-h-[90vh] overflow-y-auto"
               >
                 <div>
                   <div className="flex items-center justify-between pb-4 border-b border-[#e9e1df] mb-6">
@@ -324,13 +330,28 @@ export const Header: React.FC<HeaderProps> = ({
                     </button>
                   </div>
 
-                  <div className="space-y-2">
+                  <motion.div 
+                    initial="hidden"
+                    animate="show"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      show: {
+                        opacity: 1,
+                        transition: { staggerChildren: 0.05 }
+                      }
+                    }}
+                    className="space-y-2"
+                  >
                     {navItems.filter(item => !item.isProtected || session.user).map((item) => {
                       const isActive = currentTab === item.id;
                       const Icon = item.icon;
                       return (
-                        <button
+                        <motion.button
                           key={item.id}
+                          variants={{
+                            hidden: { opacity: 0, x: -10 },
+                            show: { opacity: 1, x: 0 }
+                          }}
                           onClick={() => handleNavClick(item.id)}
                           className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-left transition-all min-h-[44px] ${
                             isActive
@@ -340,13 +361,18 @@ export const Header: React.FC<HeaderProps> = ({
                         >
                           <Icon className={`w-4 h-4 ${isActive ? 'text-[#D4AF37]' : 'text-[#75584d]'}`} strokeWidth={1.5} />
                           <span className="truncate flex-1">{item.label}</span>
-                        </button>
+                        </motion.button>
                       );
                     })}
-                  </div>
+                  </motion.div>
                 </div>
 
-                <div className="pt-6 border-t border-[#e9e1df] space-y-3">
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="mt-6 pt-6 border-t border-[#e9e1df] space-y-3"
+                >
                   {/* PWA Install Button (If supported by browser and not installed) */}
                   {window.matchMedia && !window.matchMedia('(display-mode: standalone)').matches && (
                     <button
@@ -391,9 +417,9 @@ export const Header: React.FC<HeaderProps> = ({
                       <span>Iniciar Sesión</span>
                     </button>
                   )}
-                </div>
+                </motion.div>
               </motion.div>
-            </div>
+            </motion.div>
           )}
         </AnimatePresence>,
         document.body

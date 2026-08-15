@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Sermon } from '../types';
 import { Play, Search, Filter, Calendar, BookOpen, Share2, Heart, Bookmark, User } from 'lucide-react';
+import { motion } from 'motion/react';
+import { usePageTransition } from '../components/transitions/hooks/usePageTransition';
+import { RevealOnScroll } from '../components/transitions/RevealOnScroll';
 
 interface SermonsViewProps {
   sermons: Sermon[];
@@ -41,11 +44,18 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
 
   const featuredSermon = sermons.find(s => s.isFeatured) || sermons[0];
 
+  const { staggerContainer, fadeInUp } = usePageTransition();
+
   return (
-    <div className="space-y-10 pb-12">
+    <motion.div 
+      className="space-y-10 pb-12"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       
       {/* Header Banner */}
-      <div className="border-b border-[#e9e1df] pb-6">
+      <motion.div variants={fadeInUp} className="border-b border-[#e9e1df] pb-6">
         <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
           Archivo de Prédicas
         </span>
@@ -55,10 +65,10 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
         <p className="text-sm text-[#504441] mt-2 max-w-2xl leading-relaxed">
           Explora la colección de mensajes dominicales y estudios expositivos. Escucha en línea, guarda tus sermones favoritos o comparte con seres queridos.
         </p>
-      </div>
+      </motion.div>
 
       {/* Search and Filters Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center">
+      <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3.5 top-3 w-4 h-4 text-[#75584d]" />
@@ -88,11 +98,12 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
             </button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Featured Sermon Highlight (if no search filter applied) */}
       {!searchTerm && selectedSeries === 'all' && featuredSermon && (
-        <div className="relative rounded-3xl bg-[#442a22] text-[#fff8f6] overflow-hidden shadow-xl border border-[#5d4037] grid grid-cols-1 md:grid-cols-2">
+        <RevealOnScroll>
+          <div className="relative rounded-3xl bg-[#442a22] text-[#fff8f6] overflow-hidden shadow-xl border border-[#5d4037] grid grid-cols-1 md:grid-cols-2">
           <div className="relative min-h-[260px] md:min-h-[360px]">
             <img
               src={featuredSermon.imageUrl}
@@ -174,11 +185,12 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
               </div>
             </div>
           </div>
-        </div>
+        </RevealOnScroll>
       )}
 
       {/* Sermons Grid */}
-      <div className="space-y-4">
+      <RevealOnScroll delay={0.1}>
+        <div className="space-y-4">
         <h3 className="font-serif text-2xl font-bold text-[#442a22]">
           {selectedSeries === 'all' ? 'Todos los Sermones' : `Serie: ${selectedSeries}`}
           <span className="text-xs font-sans font-normal text-[#75584d] ml-2">
@@ -291,8 +303,8 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
             })}
           </div>
         )}
-      </div>
+      </RevealOnScroll>
 
-    </div>
+    </motion.div>
   );
 };

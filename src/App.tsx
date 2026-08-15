@@ -20,6 +20,7 @@ import { AdminView } from './views/AdminView';
 import { BiblicalBooksView } from './views/BiblicalBooksView';
 import { RequireAuth } from './components/auth/RequireAuth';
 import { NotFoundPage } from './components/errors/NotFoundPage';
+import { PageTransition } from './components/transitions/PageTransition';
 
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -268,113 +269,117 @@ export function App() {
 
       {/* Main View Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        {currentTab === 'home' && (
-          <HomeView
-            onSelectTab={setCurrentTab}
-            onOpenSermonModal={(sermon) => setSelectedSermonForPlayer(sermon)}
-            featuredSermon={featuredSermon}
-            settings={settings}
-            leaders={leaders}
-            likedIds={likedIds}
-            onToggleLike={toggleLikeSermon}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          <PageTransition key={currentTab} pageKey={currentTab}>
+            {currentTab === 'home' && (
+              <HomeView
+                onSelectTab={setCurrentTab}
+                onOpenSermonModal={(sermon) => setSelectedSermonForPlayer(sermon)}
+                featuredSermon={featuredSermon}
+                settings={settings}
+                leaders={leaders}
+                likedIds={likedIds}
+                onToggleLike={toggleLikeSermon}
+              />
+            )}
 
-        {currentTab === 'sermons' && (
-          <SermonsView
-            sermons={sermons}
-            onOpenSermonModal={(sermon) => setSelectedSermonForPlayer(sermon)}
-            favorites={favoriteIds}
-            likedIds={likedIds}
-            onToggleSave={toggleSaveSermon}
-            onToggleLike={toggleLikeSermon}
-            onShare={handleShare}
-          />
-        )}
+            {currentTab === 'sermons' && (
+              <SermonsView
+                sermons={sermons}
+                onOpenSermonModal={(sermon) => setSelectedSermonForPlayer(sermon)}
+                favorites={favoriteIds}
+                likedIds={likedIds}
+                onToggleSave={toggleSaveSermon}
+                onToggleLike={toggleLikeSermon}
+                onShare={handleShare}
+              />
+            )}
 
-        {currentTab === 'activities' && (
-          <ActivitiesView
-            events={events}
-            onOpenRegisterModal={(event) => setSelectedEventForRegistration(event)}
-          />
-        )}
+            {currentTab === 'activities' && (
+              <ActivitiesView
+                events={events}
+                onOpenRegisterModal={(event) => setSelectedEventForRegistration(event)}
+              />
+            )}
 
-        {currentTab === 'devotionals' && (
-          <DevotionalsView devotionals={devotionals} />
-        )}
+            {currentTab === 'devotionals' && (
+              <DevotionalsView devotionals={devotionals} />
+            )}
 
-        {currentTab === 'leaders' && (
-          <LeadersView
-            leaders={leaders}
-          />
-        )}
+            {currentTab === 'leaders' && (
+              <LeadersView
+                leaders={leaders}
+              />
+            )}
 
-        {currentTab === 'location' && (
-          <LocationView
-            settings={settings}
-          />
-        )}
+            {currentTab === 'location' && (
+              <LocationView
+                settings={settings}
+              />
+            )}
 
-        {currentTab === 'biblical-books' && (
-          <BiblicalBooksView
-            onSuccessToast={(msg) => addToast('Éxito', msg, 'success')}
-            onErrorToast={(msg) => addToast('Error', msg, 'error')}
-          />
-        )}
+            {currentTab === 'biblical-books' && (
+              <BiblicalBooksView
+                onSuccessToast={(msg) => addToast('Éxito', msg, 'success')}
+                onErrorToast={(msg) => addToast('Error', msg, 'error')}
+              />
+            )}
 
-        {currentTab === 'help' && (
-          <HelpView
-            onSuccessToast={(msg) => addToast('Petición recibida', msg, 'success')}
-          />
-        )}
+            {currentTab === 'help' && (
+              <HelpView
+                onSuccessToast={(msg) => addToast('Petición recibida', msg, 'success')}
+              />
+            )}
 
-        {currentTab === 'interactions' && (
-          <InteractionsView
-            posts={posts}
-            onPostsUpdated={setPosts}
-            onSuccessToast={(msg) => addToast('Publicación realizada', msg, 'success')}
-          />
-        )}
+            {currentTab === 'interactions' && (
+              <InteractionsView
+                posts={posts}
+                onPostsUpdated={setPosts}
+                onSuccessToast={(msg) => addToast('Publicación realizada', msg, 'success')}
+              />
+            )}
 
-        {currentTab === 'admin' && (
-          <RequireAuth
-            session={session}
-            requireAdmin={true}
-            onLoginNeeded={() => {
-              setRedirectTab('admin');
-              setIsAuthModalOpen(true);
-            }}
-            onGoHome={() => setCurrentTab('home')}
-            onGoBack={() => setCurrentTab(previousTab)}
-          >
-            <AdminView
-              session={session}
-              onOpenAuth={() => setIsAuthModalOpen(true)}
-              onLogout={handleLogout}
-              prayerRequests={prayerRequests}
-              onPrayerRequestsUpdated={setPrayerRequests}
-              sermons={sermons}
-              onSermonsUpdated={setSermons}
-              events={events}
-              onEventsUpdated={setEvents}
-              registrations={registrations}
-              leaders={leaders}
-              onLeadersUpdated={setLeaders}
-              devotionals={devotionals}
-              onDevotionalsUpdated={setDevotionals}
-              settings={settings}
-              onSettingsUpdated={setSettings}
-              onSuccessToast={(msg) => addToast('Éxito', msg, 'success')}
-            />
-          </RequireAuth>
-        )}
-        {/* Fallback para 404 (Tab Inexistente) */}
-        {!['home', 'sermons', 'activities', 'help', 'interactions', 'leaders', 'location', 'devotionals', 'biblical-books', 'admin'].includes(currentTab) && (
-          <NotFoundPage
-            onGoHome={() => setCurrentTab('home')}
-            onGoBack={() => setCurrentTab(previousTab)}
-          />
-        )}
+            {currentTab === 'admin' && (
+              <RequireAuth
+                session={session}
+                requireAdmin={true}
+                onLoginNeeded={() => {
+                  setRedirectTab('admin');
+                  setIsAuthModalOpen(true);
+                }}
+                onGoHome={() => setCurrentTab('home')}
+                onGoBack={() => setCurrentTab(previousTab)}
+              >
+                <AdminView
+                  session={session}
+                  onOpenAuth={() => setIsAuthModalOpen(true)}
+                  onLogout={handleLogout}
+                  prayerRequests={prayerRequests}
+                  onPrayerRequestsUpdated={setPrayerRequests}
+                  sermons={sermons}
+                  onSermonsUpdated={setSermons}
+                  events={events}
+                  onEventsUpdated={setEvents}
+                  registrations={registrations}
+                  leaders={leaders}
+                  onLeadersUpdated={setLeaders}
+                  devotionals={devotionals}
+                  onDevotionalsUpdated={setDevotionals}
+                  settings={settings}
+                  onSettingsUpdated={setSettings}
+                  onSuccessToast={(msg) => addToast('Éxito', msg, 'success')}
+                />
+              </RequireAuth>
+            )}
+            {/* Fallback para 404 (Tab Inexistente) */}
+            {!['home', 'sermons', 'activities', 'help', 'interactions', 'leaders', 'location', 'devotionals', 'biblical-books', 'admin'].includes(currentTab) && (
+              <NotFoundPage
+                onGoHome={() => setCurrentTab('home')}
+                onGoBack={() => setCurrentTab(previousTab)}
+              />
+            )}
+          </PageTransition>
+        </AnimatePresence>
       </main>
 
       {/* Footer */}

@@ -29,6 +29,9 @@ import {
   Quote
 } from 'lucide-react';
 import { extractYouTubeVideoId } from '../lib/youtube';
+import { motion } from 'motion/react';
+import { usePageTransition } from '../components/transitions/hooks/usePageTransition';
+import { RevealOnScroll } from '../components/transitions/RevealOnScroll';
 
 interface HomeViewProps {
   onSelectTab: (tab: NavTab) => void;
@@ -93,11 +96,18 @@ export const HomeView: React.FC<HomeViewProps> = ({
     setActiveVerseIndex((prev) => (prev - 1 + versesList.length) % versesList.length);
   };
 
+  const { staggerContainer, fadeInUp } = usePageTransition();
+
   return (
-    <div className="space-y-16 pb-12">
+    <motion.div 
+      className="space-y-16 pb-12"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="show"
+    >
       
       {/* Hero Banner Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-[#2c1a14] text-[#fff8f6] shadow-xl border border-[#5d4037]">
+      <motion.section variants={fadeInUp} className="relative overflow-hidden rounded-3xl bg-[#2c1a14] text-[#fff8f6] shadow-xl border border-[#5d4037]">
         {/* Background Bible image overlay with enhanced visibility */}
         <div 
           className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none transition-opacity duration-300"
@@ -215,11 +225,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* YouTube Channel & Live Stream Section (Only if configured) */}
       {isYouTubeConfigured && (
-        <section className="space-y-4">
+        <RevealOnScroll>
+          <section className="space-y-4">
           {isLive ? (
             /* ACTIVE LIVE STREAM DISPLAY - Large Screen with Muted Autoplay Video */
             <div className="rounded-3xl bg-[#1e1b1a] text-[#fff8f6] border-2 border-red-600/60 p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
@@ -373,11 +384,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
             </div>
           )}
-        </section>
+          </section>
+        </RevealOnScroll>
       )}
 
       {/* Main Bento Grid Section */}
-      <section className="space-y-6">
+      <RevealOnScroll>
+        <section className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[#e9e1df] pb-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
@@ -583,10 +596,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
 
         </div>
-      </section>
+      </RevealOnScroll>
 
       {/* Church Location & Schedules Preview Section */}
-      <section className="rounded-3xl bg-[#faf2f0] border border-[#e9e1df] p-6 sm:p-8 space-y-6 shadow-sm">
+      <RevealOnScroll delay={0.1}>
+        <section className="rounded-3xl bg-[#faf2f0] border border-[#e9e1df] p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e9e1df] pb-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
@@ -665,11 +679,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </a>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </RevealOnScroll>
 
       {/* Pastors & Leaders Section */}
-      <section className="rounded-3xl bg-[#faf2f0] border border-[#e9e1df] p-6 sm:p-8 space-y-6 shadow-sm">
+      <RevealOnScroll delay={0.1}>
+        <section className="rounded-3xl bg-[#faf2f0] border border-[#e9e1df] p-6 sm:p-8 space-y-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e9e1df] pb-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
@@ -740,11 +755,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
           ))}
         </div>
-      </section>
+      </RevealOnScroll>
 
       {/* Social Media Networks Section */}
       {hasSocials && (
-        <section className="rounded-3xl bg-[#faf2f0] border border-[#e9e1df] p-6 sm:p-8 space-y-6 shadow-sm">
+        <RevealOnScroll delay={0.1}>
+          <section className="rounded-3xl bg-[#faf2f0] border border-[#e9e1df] p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e9e1df] pb-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
