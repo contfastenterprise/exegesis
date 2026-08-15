@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavTab, SystemSettings } from '../types';
+import { NavTab, SystemSettings, UserSession } from '../types';
 import { 
   Church, 
   MapPin, 

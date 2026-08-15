@@ -211,7 +211,7 @@ export function App() {
     await AuthService.logout();
     setSession({ user: null, isAdmin: false });
     addToast('Sesión cerrada', 'Has salido del área de administración.', 'info');
-    setCurrentTab((prevTab) => prevTab === 'admin' ? 'home' : prevTab);
+    if (currentTab === 'admin') setCurrentTab('home');
   };
 
   // Auto-logout for inactivity

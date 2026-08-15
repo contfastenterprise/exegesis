@@ -42,7 +42,7 @@ export const BiblicalBooksView: React.FC<BiblicalBooksViewProps> = ({ onSuccessT
 
   const availableYears = useMemo(() => {
     const years = new Set(books.map(b => b.year).filter((y): y is number => y !== undefined && y !== null));
-    return Array.from(years).sort((a, b) => b - a); // Descending
+    return Array.from(years).sort((a: any, b: any) => b - a); // Descending
   }, [books]);
 
   // Debounced search logic for smooth filtering
