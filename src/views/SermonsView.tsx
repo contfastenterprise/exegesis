@@ -304,6 +304,7 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
             })}
           </div>
         )}
+        </div>
       </RevealOnScroll>
 
     </motion.div>
