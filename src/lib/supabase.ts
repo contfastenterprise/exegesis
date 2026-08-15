@@ -232,15 +232,44 @@ export const DataService = {
 
     if (supabase) {
       try {
-        const { data, error } = await supabase.from('sermons').insert([newSermon]).select().single();
-        if (!error && data) {
+        const dbPayload = {
+          title: newSermon.title,
+          series: newSermon.series,
+          year: newSermon.year,
+          date: newSermon.date,
+          pastor: newSermon.pastor,
+          pastor_initials: newSermon.pastorInitials,
+          passage: newSermon.passage,
+          description: newSermon.description,
+          image_url: newSermon.imageUrl,
+          youtube_url: newSermon.youtubeUrl,
+          youtube_start_minute: newSermon.youtubeStartMinute,
+          likes_count: newSermon.likesCount
+        };
+
+        const { data, error } = await supabase.from('sermons').insert([dbPayload]).select().single();
+        if (error) {
+          console.error('Supabase add sermon error:', error);
+          alert('Error al guardar sermón: ' + error.message);
+        } else if (data) {
           return {
-            ...data,
+            id: data.id,
+            title: data.title,
+            series: data.series,
+            year: data.year,
+            date: data.date,
+            pastor: data.pastor,
+            pastorInitials: data.pastor_initials,
+            passage: data.passage,
+            description: data.description,
+            imageUrl: data.image_url,
+            youtubeUrl: data.youtube_url,
+            youtubeStartMinute: data.youtube_start_minute,
             likesCount: data.likes_count || 0
           } as Sermon;
         }
       } catch (err) {
-        console.warn('Supabase add sermon failed:', err);
+        console.error('Supabase add sermon exception:', err);
       }
     }
 

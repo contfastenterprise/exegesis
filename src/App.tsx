@@ -21,6 +21,7 @@ import { BiblicalBooksView } from './views/BiblicalBooksView';
 import { RequireAuth } from './components/auth/RequireAuth';
 import { NotFoundPage } from './components/errors/NotFoundPage';
 import { PageTransition } from './components/transitions/PageTransition';
+import { AppSkeleton } from './components/Skeleton';
 
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -40,6 +41,7 @@ export function App() {
   const [session, setSession] = useState<UserSession>({ user: null, isAdmin: false });
   const [previousTab, setPreviousTab] = useState<NavTab | string>('home');
   const [redirectTab, setRedirectTab] = useState<NavTab | string | null>(null);
+  const [isAppLoading, setIsAppLoading] = useState(true);
 
   const currentTab = _currentTab;
   const setCurrentTab = (newTab: NavTab | string) => {
@@ -140,6 +142,8 @@ export function App() {
         setSession(userSession);
       } catch (err) {
         console.error('Error loading initial app data:', err);
+      } finally {
+        setIsAppLoading(false);
       }
     }
 
@@ -251,6 +255,10 @@ export function App() {
 
   const savedSermonsList = sermons.filter((s) => favoriteIds.includes(s.id));
   const totalLikesInDb = sermons.reduce((sum, s) => sum + (s.likesCount || 0), 0);
+
+  if (isAppLoading) {
+    return <AppSkeleton />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fff8f6] text-[#1e1b1a]">
