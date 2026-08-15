@@ -12,6 +12,9 @@ interface State {
 }
 
 export class GlobalErrorBoundary extends React.Component<Props, State> {
+  declare props: Props;
+  declare state: State;
+
   constructor(props: Props) {
     super(props);
     this.state = {
