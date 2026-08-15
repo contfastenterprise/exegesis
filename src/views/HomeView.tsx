@@ -594,8 +594,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </button>
             </div>
           </div>
-
         </div>
+        </section>
       </RevealOnScroll>
 
       {/* Church Location & Schedules Preview Section */}
@@ -679,6 +679,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </a>
             </div>
           </div>
+        </div>
         </section>
       </RevealOnScroll>
 
@@ -755,6 +756,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
           ))}
         </div>
+        </section>
       </RevealOnScroll>
 
       {/* Social Media Networks Section */}
@@ -879,6 +881,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             )}
           </div>
         </section>
+        </RevealOnScroll>
       )}
 
       {/* Inspirational Callout Banner */}
@@ -892,6 +895,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </p>
       </section>
 
-    </div>
+    </motion.div>
   );
 };
