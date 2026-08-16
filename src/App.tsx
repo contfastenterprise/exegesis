@@ -317,6 +317,8 @@ export function App() {
             {currentTab === 'leaders' && (
               <LeadersView
                 leaders={leaders}
+                settings={settings}
+                onSelectTab={setCurrentTab}
               />
             )}
 
