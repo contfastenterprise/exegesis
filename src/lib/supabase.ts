@@ -233,6 +233,7 @@ export const DataService = {
     if (supabase) {
       try {
         const dbPayload = {
+          id: newSermon.id,
           title: newSermon.title,
           series: newSermon.series,
           year: newSermon.year,
