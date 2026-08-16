@@ -15,6 +15,8 @@ export const HelpView: React.FC<HelpViewProps> = ({ onSuccessToast, settings }) 
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(settings.churchAddress)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+
   const handleSubmitPrayer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !message.trim()) return;
@@ -151,18 +153,17 @@ export const HelpView: React.FC<HelpViewProps> = ({ onSuccessToast, settings }) 
             </h4>
 
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#e9e1df] border border-[#e9e1df]">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4ryokVFX-tyHvhXX4fKcJlpU4fdg7ePzRZS1Tn-hGRqCQs67edLC85JV_qdMzdKmI4jp125oL-XYfRTAS1ukbKh2eBomJ0AVEX38RZNWyW-_mko4YpvrT85lQL9hnuUOKVH0mldfyNDCtQCRS5_2n9iFW3CDxz93cFQLUg5gv9izRkqVFI8jdPYieJDUnJN-rgjB5DCzXnzi9qDRtSoynDdDzFkm4OQY9BRfWxvVqGXh5sAh7kTS3"
-                alt="Mapa Cathedral City"
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
+              <iframe
+                src={embedUrl}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title={`Mapa de ubicación de ${settings.churchName}`}
+                className="w-full h-full"
               />
-              <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-                <div className="px-3 py-1.5 rounded-full bg-[#442a22] text-[#fff8f6] text-xs font-bold shadow-lg flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span>{settings.churchName}</span>
-                </div>
-              </div>
             </div>
 
             <div className="space-y-2.5 text-xs text-[#504441] pt-2">
