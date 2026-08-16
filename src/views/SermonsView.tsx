@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Sermon } from '../types';
-import { Play, Search, Filter, Calendar, BookOpen, Share2, Heart, Bookmark, User } from 'lucide-react';
+import { Play, Search, Filter, Calendar, BookOpen, Share2, Heart, Bookmark, User, Clock } from 'lucide-react';
+import { extractYouTubeVideoId, getYouTubeThumbnailUrl } from '../lib/youtube';
 import { motion } from 'motion/react';
 import { usePageTransition } from '../components/transitions/hooks/usePageTransition';
 import { RevealOnScroll } from '../components/transitions/RevealOnScroll';
@@ -26,6 +27,14 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSeries, setSelectedSeries] = useState<string>('all');
+
+  const getSermonThumbnail = (sermon: Sermon) => {
+    if (sermon.youtubeUrl) {
+      const videoId = extractYouTubeVideoId(sermon.youtubeUrl);
+      if (videoId) return getYouTubeThumbnailUrl(videoId);
+    }
+    return sermon.imageUrl;
+  };
 
   // Extract unique series
   const seriesList = ['all', ...Array.from(new Set(sermons.map(s => s.series)))];
@@ -106,7 +115,7 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
           <div className="relative rounded-3xl bg-[#442a22] text-[#fff8f6] overflow-hidden shadow-xl border border-[#5d4037] grid grid-cols-1 md:grid-cols-2">
           <div className="relative min-h-[260px] md:min-h-[360px]">
             <img
-              src={featuredSermon.imageUrl}
+              src={getSermonThumbnail(featuredSermon)}
               alt={featuredSermon.title}
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
@@ -218,7 +227,7 @@ export const SermonsView: React.FC<SermonsViewProps> = ({
                     {/* Thumbnail */}
                     <div className="relative aspect-video w-full overflow-hidden bg-[#442a22]">
                       <img
-                        src={sermon.imageUrl}
+                        src={getSermonThumbnail(sermon)}
                         alt={sermon.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"
