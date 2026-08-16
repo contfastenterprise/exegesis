@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Heart, Send, MapPin, Phone, Mail, Clock, Shield, CheckCircle2 } from 'lucide-react';
 import { DataService } from '../lib/supabase';
+import { SystemSettings } from '../types';
 
 interface HelpViewProps {
   onSuccessToast: (message: string) => void;
+  settings: SystemSettings;
 }
 
-export const HelpView: React.FC<HelpViewProps> = ({ onSuccessToast }) => {
+export const HelpView: React.FC<HelpViewProps> = ({ onSuccessToast, settings }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -158,7 +160,7 @@ export const HelpView: React.FC<HelpViewProps> = ({ onSuccessToast }) => {
               <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
                 <div className="px-3 py-1.5 rounded-full bg-[#442a22] text-[#fff8f6] text-xs font-bold shadow-lg flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span>Cathedral City, CA</span>
+                  <span>{settings.churchName}</span>
                 </div>
               </div>
             </div>
@@ -166,15 +168,15 @@ export const HelpView: React.FC<HelpViewProps> = ({ onSuccessToast }) => {
             <div className="space-y-2.5 text-xs text-[#504441] pt-2">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
-                <span>123 Sanctuary Way, Cathedral City, CA 92234</span>
+                <span>{settings.churchAddress}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#D4AF37] shrink-0" />
-                <span>+1 (555) 123-4567</span>
+                <span>{settings.churchPhone}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#D4AF37] shrink-0" />
-                <span>contacto@gracetruth.org</span>
+                <span>{settings.churchEmail}</span>
               </div>
             </div>
           </div>

@@ -336,6 +336,7 @@ export function App() {
             {currentTab === 'help' && (
               <HelpView
                 onSuccessToast={(msg) => addToast('Petición recibida', msg, 'success')}
+                settings={settings}
               />
             )}
 
