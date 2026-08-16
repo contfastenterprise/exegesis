@@ -159,21 +159,21 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   // Form states for adding sermon
   const [sermonTitle, setSermonTitle] = useState('');
-  const [sermonSeries, setSermonSeries] = useState('The Gospel of John');
-  const [sermonPastor, setSermonPastor] = useState('Pastor John Doe');
-  const [sermonPassage, setSermonPassage] = useState('Juan 3:16');
+  const [sermonSeries, setSermonSeries] = useState('');
+  const [sermonPastor, setSermonPastor] = useState('');
+  const [sermonPassage, setSermonPassage] = useState('');
   const [sermonDescription, setSermonDescription] = useState('');
-  const [sermonImageUrl, setSermonImageUrl] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuDqTp-rwCGJ5Kerwpfgv2DvjZlDXANtpReyhozTBJokn2BSauW3K_90NUrA7r5Et4ZHNQv-22As5yeEUP9YGowszb1m_FurlfBPjRULRfCzcZ4NnuG2OEahexpBwmbuMMZhnZH6cdRj9WJVFRgyKgSpJy5g2bT4LJbyPVLZpgon2IMJxbhmjL_3nfbK7lPf84eoXGQ3Nt6H4JDShRnKK5oW_J5iM9byn9G5ezSiS2BlSuD25BZufBnD');
+  const [sermonImageUrl, setSermonImageUrl] = useState('');
   const [sermonYoutubeUrl, setSermonYoutubeUrl] = useState('');
   const [sermonYoutubeStartMinute, setSermonYoutubeStartMinute] = useState(0);
   const [isSavingSermon, setIsSavingSermon] = useState(false);
 
   // Form states for adding event
   const [eventTitle, setEventTitle] = useState('');
-  const [eventCategory, setEventCategory] = useState('Estudio Bíblico');
-  const [eventDate, setEventDate] = useState('Próximo Sábado');
-  const [eventTime, setEventTime] = useState('18:00');
-  const [eventLocation, setEventLocation] = useState('Salón Principal');
+  const [eventCategory, setEventCategory] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [eventTime, setEventTime] = useState('');
+  const [eventLocation, setEventLocation] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [eventLeaderName, setEventLeaderName] = useState('');
   const [eventContactPhone, setEventContactPhone] = useState('');
@@ -181,13 +181,13 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
   // Form states for managing leaders
   const [leaderName, setLeaderName] = useState('');
-  const [leaderRole, setLeaderRole] = useState('Pastor Co-Líder');
+  const [leaderRole, setLeaderRole] = useState('');
   const [leaderPhone, setLeaderPhone] = useState('');
   const [leaderEmail, setLeaderEmail] = useState('');
   const [leaderTwitterUrl, setLeaderTwitterUrl] = useState('');
   const [leaderYoutubeUrl, setLeaderYoutubeUrl] = useState('');
   const [isSavingLeader, setIsSavingLeader] = useState(false);
-  const [leaderImageUrl, setLeaderImageUrl] = useState('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80');
+  const [leaderImageUrl, setLeaderImageUrl] = useState('');
   const [leaderBio, setLeaderBio] = useState('');
   const [editingLeaderId, setEditingLeaderId] = useState<string | null>(null);
   const leaderFileInputRef = useRef<HTMLInputElement>(null);
@@ -381,7 +381,11 @@ export const AdminView: React.FC<AdminViewProps> = ({
       onSermonsUpdated(freshSermons);
       onSuccessToast('¡Sermón agregado con éxito!');
       setSermonTitle('');
+      setSermonSeries('');
+      setSermonPastor('');
+      setSermonPassage('');
       setSermonDescription('');
+      setSermonImageUrl('');
       setSermonYoutubeUrl('');
       setSermonYoutubeStartMinute(0);
     } finally {
@@ -419,9 +423,10 @@ export const AdminView: React.FC<AdminViewProps> = ({
       const freshEvents = await DataService.getEvents();
       onEventsUpdated(freshEvents);
       setEventTitle('');
+      setEventCategory('');
       setEventDate('');
-      setEventTime('18:00');
-      setEventLocation('Salón Principal');
+      setEventTime('');
+      setEventLocation('');
       setEventDescription('');
       setEventLeaderName('');
       setEventContactPhone('');
@@ -474,10 +479,12 @@ export const AdminView: React.FC<AdminViewProps> = ({
 
       // Reset form
       setLeaderName('');
-      setLeaderRole('Pastor Co-Líder');
+      setLeaderRole('');
       setLeaderPhone('');
       setLeaderEmail('');
-      setLeaderImageUrl('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80');
+      setLeaderTwitterUrl('');
+      setLeaderYoutubeUrl('');
+      setLeaderImageUrl('');
       setLeaderBio('');
       setEditingLeaderId(null);
     } finally {
