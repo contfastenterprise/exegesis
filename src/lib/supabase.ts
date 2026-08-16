@@ -238,12 +238,12 @@ export const DataService = {
           year: newSermon.year,
           date: newSermon.date,
           pastor: newSermon.pastor,
-          pastor_initials: newSermon.pastorInitials,
+          pastorInitials: newSermon.pastorInitials,
           passage: newSermon.passage,
           description: newSermon.description,
-          image_url: newSermon.imageUrl,
-          youtube_url: newSermon.youtubeUrl,
-          youtube_start_minute: newSermon.youtubeStartMinute,
+          imageUrl: newSermon.imageUrl,
+          youtubeUrl: newSermon.youtubeUrl,
+          youtubeStartMinute: newSermon.youtubeStartMinute,
           likes_count: newSermon.likesCount
         };
 
@@ -259,12 +259,12 @@ export const DataService = {
             year: data.year,
             date: data.date,
             pastor: data.pastor,
-            pastorInitials: data.pastor_initials,
+            pastorInitials: data.pastorInitials,
             passage: data.passage,
             description: data.description,
-            imageUrl: data.image_url,
-            youtubeUrl: data.youtube_url,
-            youtubeStartMinute: data.youtube_start_minute,
+            imageUrl: data.imageUrl,
+            youtubeUrl: data.youtubeUrl,
+            youtubeStartMinute: data.youtubeStartMinute,
             likesCount: data.likes_count || 0
           } as Sermon;
         }
