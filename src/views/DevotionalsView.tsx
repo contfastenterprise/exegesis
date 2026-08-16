@@ -43,7 +43,7 @@ export const DevotionalsView: React.FC<DevotionalsViewProps> = ({ devotionals })
               {devo.type === 'youtube' && devo.youtubeUrl && (
                 <div className="relative aspect-video w-full bg-black/5 overflow-hidden">
                   <img 
-                    src={getYouTubeThumbnailUrl(devo.youtubeUrl)} 
+                    src={getYouTubeThumbnailUrl(extractYouTubeVideoId(devo.youtubeUrl))} 
                     alt={devo.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
